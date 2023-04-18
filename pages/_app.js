@@ -49,7 +49,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <title>Backoffice อั่งเปา</title>
+        <title>Transaction Angpaos</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />

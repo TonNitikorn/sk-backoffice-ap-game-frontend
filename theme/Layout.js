@@ -200,18 +200,7 @@ function Layout({ children, page }) {
 
         <Divider />
         <List>
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => router.push('/profile')}
-              sx={{
-                borderRadius: "6px",
-                backgroundColor: typeof window !== "undefined" ? window.location.pathname === '/profile' ? "#41A3E3" : '#eee' : ''
-              }}>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary="โปรไฟล์" />
-            </ListItemButton>
-          </ListItem>
+         
           <ListItem disablePadding>
             <ListItemButton
               onClick={async () => {

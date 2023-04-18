@@ -16,12 +16,12 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 export const menuSuperAdmin = [
   {
     name: "รายการ แพ้/ชนะ",
-    link: "/home",
+    link: "/list",
     icon: <AccountBalanceIcon />,
   },
   {
     name: "รายละเอียด แพ้/ชนะ ",
-    link: "/home",
+    link: "/listDetail",
     icon: <GroupsIcon />,
   },
   
