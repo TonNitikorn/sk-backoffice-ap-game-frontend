@@ -1,3 +1,3 @@
-const hostnameAP = "http://localhost:5002";
+const hostnameAP = "https://angpaogame-api-xbww4.ondigitalocean.app/";
 
 export default hostnameAP;

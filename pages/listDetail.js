@@ -32,7 +32,6 @@ import {
 import moment from "moment";
 import axios from "axios";
 import hostname from "../utils/hostname";
-import hostnameAP from "../utils/hostnameAP";
 import LoadingModal from "../theme/LoadingModal";
 import Chart from 'chart.js/auto';
 
@@ -60,7 +59,7 @@ function listDetail() {
                     Authorization: "Bearer " + localStorage.getItem("access_token"),
                 },
                 method: "post",
-                url: `${hostnameAP}/v1/member/getGameChart`,
+                url: `${hostname}/v1/member/getGameChart`,
                 data: {
                     "start_date": selectedDateRange.start,
                     "end_date": selectedDateRange.end,
@@ -84,7 +83,7 @@ function listDetail() {
                     Authorization: "Bearer " + localStorage.getItem("access_token"),
                 },
                 method: "post",
-                url: `${hostnameAP}/v1/member/getGame`,
+                url: `${hostname}/v1/member/getGame`,
                 data: {
                     "game_name": rowData.game_name || 'CSGO',
                     "username": username || '',

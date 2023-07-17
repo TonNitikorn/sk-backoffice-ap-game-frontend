@@ -24,7 +24,6 @@ import {
 import moment from "moment";
 import axios from "axios";
 import hostname from "../utils/hostname";
-import hostnameAP from "../utils/hostnameAP";
 import LoadingModal from "../theme/LoadingModal";
 
 
@@ -47,7 +46,7 @@ function list() {
           Authorization: "Bearer " + localStorage.getItem("access_token"),
         },
         method: "post",
-        url: `${hostnameAP}/v1/member/getMemberTransaction`,
+        url: `${hostname}/v1/member/getMemberTransaction`,
         data: {
           "start_date": type === undefined ? selectedDateRange.start : start,
           "end_date": type === undefined ? selectedDateRange.end : end,
