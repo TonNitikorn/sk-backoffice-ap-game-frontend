@@ -46,7 +46,7 @@ function list() {
           Authorization: "Bearer " + localStorage.getItem("access_token"),
         },
         method: "post",
-        url: `${hostname}/v1/member/getMemberTransaction`,
+        url: `${hostname}/member/getMemberTransaction`,
         data: {
           "start_date": type === undefined ? selectedDateRange.start : start,
           "end_date": type === undefined ? selectedDateRange.end : end,

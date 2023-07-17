@@ -59,7 +59,7 @@ function listDetail() {
                     Authorization: "Bearer " + localStorage.getItem("access_token"),
                 },
                 method: "post",
-                url: `${hostname}/v1/member/getGameChart`,
+                url: `${hostname}/member/getGameChart`,
                 data: {
                     "start_date": selectedDateRange.start,
                     "end_date": selectedDateRange.end,
@@ -83,7 +83,7 @@ function listDetail() {
                     Authorization: "Bearer " + localStorage.getItem("access_token"),
                 },
                 method: "post",
-                url: `${hostname}/v1/member/getGame`,
+                url: `${hostname}/member/getGame`,
                 data: {
                     "game_name": rowData.game_name || 'CSGO',
                     "username": username || '',
