@@ -179,7 +179,7 @@ function Login() {
                      <Typography component="h1" variant="h5">
                         เข้าสู่ระบบ
                      </Typography>
-                     <Box  noValidate sx={{ mt: 1 }}>
+                     <Box noValidate sx={{ mt: 1 }}>
                         <TextField
                            margin="normal"
                            required
@@ -202,6 +202,16 @@ function Login() {
                            type="password"
                            autoComplete="current-password"
                         />
+                        <TextField
+                           margin="normal"
+                           required
+                           fullWidth
+                           value={rowData.prefix || ""}
+                           onChange={(e) => handleChangeData(e)}
+                           name="prefix"
+                           label="prefix"
+                           type="text"
+                        />
                         <FormControlLabel
                            control={<Checkbox value="remember" color="primary" />}
                            label="Remember me"
@@ -214,13 +224,13 @@ function Login() {
                            onClick={
                               async () => {
                                  const response = await dispatch(
-                                    signIn({ username: rowData.username, password: rowData.password })
+                                    signIn({ username: rowData.username, password: rowData.password, prefix: rowData.prefix })
                                  );
                                  if (response.meta.requestStatus === "rejected") {
                                     alert("Login failed");
-   
+
                                  } else {
-                                    router.push("/home");
+                                    router.push("/list");
                                  }
                               }
                            }

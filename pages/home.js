@@ -111,8 +111,8 @@ function home() {
 
 
     useEffect(() => {
-        getDataLast()
-        getBank()
+        // getDataLast()
+        // getBank()
     }, [])
 
 

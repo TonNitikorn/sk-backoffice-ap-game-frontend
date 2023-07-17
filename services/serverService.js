@@ -12,7 +12,9 @@ export const signIn = async (user) => {
       url: `${hostname}/auth/login`,
       data: {
         "username": user.username,
-        "password": user.password
+        "password": user.password,
+        "prefix": user.prefix,
+
       }
     });
     localStorage.setItem("access_token", res.data.access_token);
