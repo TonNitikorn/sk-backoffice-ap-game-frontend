@@ -107,7 +107,6 @@ function listDetail() {
         }
     };
 
-    console.log('game', dataGame)
 
     const options = {
         responsive: true,
@@ -163,12 +162,56 @@ function listDetail() {
         <Layout>
             <Paper sx={{ p: 3 }}>
                 <Typography variant='h5'>รายละเอียดเกม</Typography>
-
-                <Grid container direction="row">
-                    <Grid item xs={5}>
-                        <Box sx={{ mt: 3 }}>
-                            <Typography variant='h7' >กรุณาเลือกเกมที่ต้องการ</Typography>
-                        </Box>
+                <Grid container sx={{ mt: 3 }}>
+                    <Grid item={true} xs={12} sx={{ mb: 3, }}>
+                        <TextField
+                            label="เริ่ม"
+                            style={{
+                                marginRight: "8px",
+                                marginTop: "8px",
+                                backgroundColor: "white",
+                                borderRadius: 4,
+                            }}
+                            variant="outlined"
+                            size="small"
+                            type="datetime-local"
+                            name="start"
+                            value={selectedDateRange.start}
+                            onChange={(e) => {
+                                setSelectedDateRange({
+                                    ...selectedDateRange,
+                                    [e.target.name]: e.target.value,
+                                });
+                            }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                        <TextField
+                            label="สิ้นสุด"
+                            style={{
+                                marginRight: "8px",
+                                marginTop: "8px",
+                                color: "white",
+                                backgroundColor: "white",
+                                borderRadius: 4,
+                            }}
+                            variant="outlined"
+                            size="small"
+                            type="datetime-local"
+                            name="end"
+                            value={selectedDateRange.end}
+                            onChange={(e) => {
+                                setSelectedDateRange({
+                                    ...selectedDateRange,
+                                    [e.target.name]: e.target.value,
+                                });
+                            }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            required
+                        />
                         <TextField
                             name="game_name"
                             type="text"
@@ -187,7 +230,6 @@ function listDetail() {
                             <MenuItem value="TheWitcher3">TheWitcher3</MenuItem>
                             <MenuItem value="CSGO">CSGO</MenuItem>
                         </TextField>
-
                         <TextField
                             name="username"
                             type="text"
@@ -199,62 +241,9 @@ function listDetail() {
                             size="small"
                             sx={{ mx: 2, mt: 1 }}
                         />
-                    </Grid>
-                    <Grid item xs={3}>
-                        <Box sx={{ mt: 3 }}>
-                            <Typography variant='h7' >กรุณาเลือกระยะเวลา</Typography>
-                        </Box>
-
-
-                        <FormControl>
-                            <RadioGroup
-                                row
-                                defaultValue="auto"
-                                name="radio-buttons-group"
-                                sx={{ mt: 1 }}
-                            >
-                                <FormControlLabel value="today"
-                                    control={<Radio />}
-                                    label={<Typography >วันนี้</Typography>}
-                                    onClick={() =>
-                                        setSelectedDateRange({
-                                            start: moment().format("YYYY-MM-DD 00:00:00"),
-                                            end: moment().format("YYYY-MM-DD 23:59:00")
-                                        })}
-                                />
-                                <FormControlLabel value="yesterday"
-                                    control={<Radio />}
-                                    label={<Typography >เมื่อวาน </Typography>} onClick={() =>
-                                        setSelectedDateRange({
-                                            start: moment().subtract(1, "days").format("YYYY-MM-DD 00:00:00"),
-                                            end: moment().format("YYYY-MM-DD 23:59:00")
-                                        })}
-                                />
-                                <FormControlLabel value="week"
-                                    control={<Radio />}
-                                    label={<Typography >สัปดาห์ </Typography>}
-                                    onClick={() =>
-                                        setSelectedDateRange({
-                                            start: moment().subtract(7, "days").format("YYYY-MM-DD 00:00:00"),
-                                            end: moment().format("YYYY-MM-DD 23:59:00")
-                                        })}
-                                />
-                                <FormControlLabel value="month"
-                                    control={<Radio />}
-                                    label={<Typography >เดือน </Typography>} onClick={() =>
-                                        setSelectedDateRange({
-                                            start: moment().subtract(30, "days").format("YYYY-MM-DD 00:00:00"),
-                                            end: moment().format("YYYY-MM-DD 23:59:00")
-                                        })}
-                                />
-                            </RadioGroup>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={4} sx={{ textAlign: 'start' }}>
-
                         <Button
                             variant="contained"
-                            style={{ marginRight: "8px", marginTop: 50, width: 300 }}
+                            style={{ marginRight: "8px", marginTop: "8px", width: 300 }}
                             color="primary"
                             size="large"
                             type="submit"

@@ -89,8 +89,6 @@ function list() {
         <Typography variant="h5" sx={{ mb: 2 }}>รายการการแพ้ชนะ</Typography>
         <Grid container>
           <Grid item={true} xs={12} sx={{ mb: 3, }}>
-
-
             <TextField
               label="เริ่ม"
               style={{
@@ -247,7 +245,7 @@ function list() {
           pageSize: 20,
           pageSizeOptions: [10, 20, 100],
           padding: 0,
-          filtering: true
+          // filtering: true
         }}
         localization={{
           toolbar: {
