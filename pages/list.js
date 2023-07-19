@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Layout from '../theme/Layout'
 import MaterialTable from '@material-table/core'
 import {
@@ -9,79 +9,287 @@ import {
   TextField,
   Snackbar,
   Alert,
-  Chip,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   IconButton,
-  Card,
-  CardContent,
-  Divider,
-  Box,
-  CardMedia,
-  MenuItem
 } from "@mui/material";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import moment from "moment";
 import axios from "axios";
 import hostname from "../utils/hostname";
 import LoadingModal from "../theme/LoadingModal";
-
+import { Table, Input, Space, } from 'antd';
+import SearchIcon from '@mui/icons-material/Search';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import { useRouter } from "next/router";
 
 function list() {
+  const router = useRouter();
+  const searchInput = useRef(null);
   const [selectedDateRange, setSelectedDateRange] = useState({
     start: moment().format("YYYY-MM-DD 00:00"),
     end: moment().format("YYYY-MM-DD 23:59"),
   });
+  const [open, setOpen] = useState(false)
   const [username, setUsername] = useState("");
-  const [report, setReport] = useState([])
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [memberList, setMemberList] = useState([])
 
-
-
-  const getReport = async (type, start, end) => {
+  const getMemberList = async (type, start, end) => {
     setLoading(true);
     try {
       let res = await axios({
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-        method: "post",
-        url: `${hostname}/member/getMemberTransaction`,
-        data: {
-          "start_date": type === undefined ? selectedDateRange.start : start,
-          "end_date": type === undefined ? selectedDateRange.end : end,
-          "username": username
-        }
+        headers: { Authorization: "Bearer " + localStorage.getItem("access_token"), },
+        method: "get",
+        url: `${hostname}/transaction/get_allmember`,
       });
-
-      let resData = res.data;
+      let resData = res.data.member;
       let no = 1;
       resData.map((item) => {
         item.no = no++;
-        item.create_at = moment(item.create_at).format('DD/MM/YYYY hh:mm')
-        item.update_at = moment(item.update_at).format('DD/MM/YYYY hh:mm')
-        item.prefix = item.prefix === null ? "-" : item.prefix
-        item.bet_detail = item.bet_detail === "" ? "-" : item.bet_detail
-        item.bet_amount_after = Intl.NumberFormat('th-TH', {style: 'currency',currency: 'THB',}).format(item.bet_amount_after)
-        item.bet_amount_before = Intl.NumberFormat('th-TH', {style: 'currency',currency: 'THB',}).format(item.bet_amount_before)
-        item.bet_result = Intl.NumberFormat('th-TH', {style: 'currency',currency: 'THB',}).format(item.bet_result)
-        item.bet_amount = Intl.NumberFormat('th-TH', {style: 'currency',currency: 'THB',}).format(item.bet_amount)
+        item.fullname = item.fname + ' ' + item.lname
       });
-      setReport(resData);
-
+      setMemberList(resData);
       setLoading(false);
     } catch (error) {
       console.log(error);
-      // if (
-      //   error.response.data.error.status_code === 401 &&
-      //   error.response.data.error.message === "Unauthorized"
-      // ) {
-      //   dispatch(signOut());
-      //   localStorage.clear();
-      //   router.push("/auth/login");
-      // }
+      if (
+        error.response.data.error.status_code === 401 &&
+        error.response.data.error.message === "Unauthorized"
+      ) {
+        dispatch(signOut());
+        localStorage.clear();
+        router.push("/auth/login");
+      }
     }
   };
+
+  const onChange = (pagination, filters, sorter, extra) => {
+    console.log('params', pagination, filters, sorter, extra);
+  };
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: 'block',
+          }}
+        />
+        <Space>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            <SearchIcon />
+            Search
+          </Button>
+          {/* <Button
+           type="link"
+           size="small"
+           onClick={() => {
+             confirm({
+               closeDropdown: false,
+             });
+             setSearchText(selectedKeys[0]);
+             setSearchedColumn(dataIndex);
+           }}
+         >
+           Filter
+         </Button> */}
+          {/* <Button
+           type="link"
+           size="small"
+           onClick={() => {
+             close();
+           }}
+         >
+           close
+         </Button> */}
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchIcon
+        style={{
+          color: filtered ? '#1890ff' : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+  };
+
+  const handleClickSnackbar = () => {
+    setOpen(true);
+  };
+  const handleClose = (event, reason) => {
+    setOpen(false);
+  };
+
+
+  const columnsMember = [
+    {
+      title: 'ลำดับ',
+      dataIndex: 'no',
+      align: 'center',
+      sorter: (record1, record2) => record1.no - record2.no,
+      render: (item, data) => (
+        <Typography sx={{ fontSize: '14px', textAlign: 'center' }} >{item}</Typography>
+      )
+    },
+
+    {
+      title: 'บัญชี',
+      dataIndex: 'username',
+      align: 'left',
+      width: 250,
+      render: (item, data) => (
+        <CopyToClipboard text={item}>
+          <div style={{ "& .MuiButton-text": { "&:hover": { textDecoration: "underline blue 1px", } } }} >
+            <Button
+              sx={{
+                fontSize: "14px",
+                p: 0,
+                color: "blue",
+              }}
+              onClick={handleClickSnackbar}
+            >
+              {item}
+            </Button>
+          </div>
+        </CopyToClipboard>
+      ),
+      ...getColumnSearchProps('username'),
+
+    },
+    {
+      dataIndex: "fullname",
+      title: "ชื่อ",
+      align: "left",
+      width: 200,
+      sorter: (record1, record2) => record1.credit - record2.credit,
+      render: (item) => (
+        <Typography
+          style={{
+            fontSize: '14px'
+          }}
+        >{item}</Typography>
+      ),
+      ...getColumnSearchProps('fullname'),
+    },
+    {
+      dataIndex: "rank",
+      title: "rank",
+      align: "center",
+      sorter: (record1, record2) => record1.credit - record2.credit,
+      render: (item) => (
+        <Typography
+          style={{
+            fontSize: '14px'
+          }}
+        >{item}</Typography>
+      ),
+    },
+    {
+      dataIndex: "bet_amount",
+      title: "สกุลเงิน",
+      align: "center",
+      width: 100,
+      sorter: (record1, record2) => record1.credit - record2.credit,
+      render: (item) => (
+        <Typography
+          style={{
+            fontSize: '14px'
+          }}
+        >{'THB'}</Typography>
+      ),
+    },
+    {
+      dataIndex: "credit",
+      title: "จำนวนเครดิต",
+      align: "center",
+      sorter: (record1, record2) => record1.credit - record2.credit,
+      render: (item) => (
+        <Typography
+          style={{
+            fontSize: '14px'
+          }}
+        >{item}</Typography>
+      ),
+    },
+    {
+      dataIndex: "bet_amount_before",
+      title: "จำนวนรอบเดิมพัน",
+      align: "center",
+      width: 160,
+      ...getColumnSearchProps('bet_amount_before'),
+      render: (item) => (
+        <Typography
+          style={{
+            fontSize: '14px'
+          }}
+        >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
+      ),
+    },
+    {
+      dataIndex: "bet_detail",
+      title: "รายละเอียดการเดิมพัน",
+      align: "center",
+      render: (item,data) => (
+        <>
+          <IconButton
+            onClick={async () => {
+              router.push(`/listTransactionByUsername?username=${data.username}`)
+              }}
+          >
+            <ManageSearchIcon color="primary" />
+          </IconButton>
+        </>
+      ),
+    },
+  ]
+
+  useEffect(() => {
+    getMemberList()
+  }, [])
 
   return (
     <Layout>
@@ -202,59 +410,36 @@ function list() {
           </Grid>
         </Grid>
       </Paper>
+      
+      <Grid style={{ marginTop: "20px" }}>
+        <Table
+          columns={columnsMember}
+          dataSource={memberList}
+          onChange={onChange}
+          size="small"
+          pagination={{
+            current: page,
+            pageSize: pageSize,
+            onChange: (page, pageSize) => {
+              setPage(page)
+              setPageSize(pageSize)
+            }
+          }}
+        />
+      </Grid>
 
-      <MaterialTable
-        title=""
-        columns={[
-          { title: 'ลำดับที่', field: 'no',align:'center' },
-          { title: 'ยูสเซอร์', field: 'username' },
-          { title: 'เกม', field: 'game_name' },
-          { title: 'จำนวน', field: 'bet_amount' },
-          { title: 'ผลลัพธ์ ', field: 'bet_result' },
-          { title: 'เครดิตก่อน bet', field: 'bet_amount_before' },
-          { title: 'เครดิตหลัง bet	', field: 'bet_amount_after' },
-          { title: 'ประเภทการเดิมพัน', field: 'bet_type' },
-          // { title: 'สกุลเงิน', field: 'bet_currency' },
-          { title: 'สถานะ', field: 'bet_status' },
-          { title: 'เวลาเดิมพัน', field: 'create_at' },
-          { title: 'อัปเดทรายการ', field: 'update_at' },
-          { title: 'prefix', field: 'prefix',align:'center' },
-          { title: 'รายละเอียด', field: 'bet_detail',align:'center' },
-        ]}
-        data={report}
-        options={{
-          exportMenu: [
-            {
-              label: "Export CSV",
-              exportFunc: (cols, datas) =>
-                ExportCsv(cols, datas, "รายการเดินบัญชี"),
-            },
-          ],
-          search: true,
-          columnsButton: true,
-          columnResizable: true,
-          rowStyle: {
-            fontSize: 14,
-          },
-          headerStyle: {
-            paddingTop: 5,
-            paddingBottom: 5,
-            align: "center",
-            paddingRight: 0
-          },
-          pageSize: 20,
-          pageSizeOptions: [10, 20, 100],
-          padding: 0,
-          // filtering: true
-        }}
-        localization={{
-          toolbar: {
-            exportCSVName: "Export some excel format",
-            exportPDFName: "Export as pdf!!"
-          }
-        }}
-      />
+
       <LoadingModal open={loading} />
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          Copy success !
+        </Alert>
+      </Snackbar>
     </Layout>
   )
 }
