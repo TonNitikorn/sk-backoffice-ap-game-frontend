@@ -53,16 +53,17 @@ function list() {
       setLoading(false);
     } catch (error) {
       console.log(error);
-      if (
-        error.response.data.error.status_code === 401 &&
-        error.response.data.error.message === "Unauthorized"
-      ) {
-        dispatch(signOut());
-        localStorage.clear();
-        router.push("/auth/login");
-      }
+    //   if (
+    //     error.response.data.error.status_code === 401 &&
+    //     error.response.data.error.message === "Unauthorized"
+    //   ) {
+    //     dispatch(signOut());
+    //     localStorage.clear();
+    //     router.push("/auth/login");
+    //   }
     }
   };
+  console.log('memberList', memberList)
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
@@ -273,12 +274,12 @@ function list() {
       dataIndex: "bet_detail",
       title: "รายละเอียดการเดิมพัน",
       align: "center",
-      render: (item,data) => (
+      render: (item, data) => (
         <>
           <IconButton
             onClick={async () => {
               router.push(`/listTransactionByUsername?username=${data.username}`)
-              }}
+            }}
           >
             <ManageSearchIcon color="primary" />
           </IconButton>
@@ -364,7 +365,7 @@ function list() {
               size="large"
               type="submit"
               onClick={() => {
-                getReport();
+                // getReport();
               }}
             >
               <Typography sx={{ color: '#ffff' }}>ค้นหา</Typography>
@@ -410,7 +411,7 @@ function list() {
           </Grid>
         </Grid>
       </Paper>
-      
+
       <Grid style={{ marginTop: "20px" }}>
         <Table
           columns={columnsMember}
@@ -424,6 +425,52 @@ function list() {
               setPage(page)
               setPageSize(pageSize)
             }
+          }}
+          summary={(pageData) => {
+            let totalCredit = 0;
+            let totalBefore = 0;
+            let totalAfter = 0;
+            let totalSumCredit = ''
+            let totalSumCreditBefore = ''
+            let totalSumCreditAfter = ''
+            let totalWin = 0
+            let totalBetAmount = 0
+
+
+            pageData.forEach(({ credit, betAmount, credit_after, sumCredit, sumCreditBefore, sumCreditAfter }) => {
+              totalCredit += parseInt(credit);
+              totalBetAmount += parseInt(betAmount);
+              totalAfter += parseInt(credit_after);
+              totalSumCredit = sumCredit
+              totalSumCreditBefore = sumCreditBefore
+              totalSumCreditAfter = sumCreditAfter
+
+            });
+            return (
+              <>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell > <Typography align="center" sx={{ fontWeight: "bold" }} > ยอดรวม </Typography> </Table.Summary.Cell>
+                  <Table.Summary.Cell />
+                  <Table.Summary.Cell />
+                  <Table.Summary.Cell />
+                  <Table.Summary.Cell />
+                  <Table.Summary.Cell >
+                    <Typography align="center" sx={{ fontWeight: "bold", color: '#129A50' }} >
+                      {Intl.NumberFormat("TH").format(parseInt(totalCredit))}
+                    </Typography>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell >
+                    <Typography align="center" sx={{ fontWeight: "bold", }} >
+                      {/* {Intl.NumberFormat("TH").format(parseInt(totalCredit))} */}
+                      จำนวนรอบรวม API 
+                    </Typography>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell />
+
+                </Table.Summary.Row>
+
+              </>
+            );
           }}
         />
       </Grid>
