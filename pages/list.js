@@ -43,7 +43,7 @@ function list() {
         method: "get",
         url: `${hostname}/transaction/get_allmember`,
       });
-      let resData = res.data.member;
+      let resData = res.data;
       let no = 1;
       resData.map((item) => {
         item.no = no++;
