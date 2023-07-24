@@ -289,7 +289,7 @@ function list() {
   ]
 
   useEffect(() => {
-    // getMemberList()
+    getMemberList()
   }, [])
 
   return (
