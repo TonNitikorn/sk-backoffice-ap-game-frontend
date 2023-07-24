@@ -24,6 +24,11 @@ export const menuSuperAdmin = [
     link: "/listDetail",
     icon: <GroupsIcon />,
   },
+  {
+    name: "จัดการเกม ",
+    link: "/customGame",
+    icon: <GroupsIcon />,
+  },
   
   
 
