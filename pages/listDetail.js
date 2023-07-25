@@ -11,7 +11,7 @@ import {
   Chip,
   Card,
   CardContent,
-  FormControlLabel,
+  Box,
   Radio,
   IconButton,
   MenuItem,
@@ -29,6 +29,7 @@ import {
 } from "chart.js";
 import moment from "moment";
 import axios from "axios";
+import noImg from "../assets/noImgFound.png"
 import hostname from "../utils/hostname";
 import LoadingModal from "../theme/LoadingModal";
 import Chart from 'chart.js/auto';
@@ -47,6 +48,8 @@ function listDetail() {
   const [loading, setLoading] = useState(false);
   const [chart, setChart] = useState([])
   const [dataGame, setDataGame] = useState([])
+  const [gameList, setGameList] = useState([])
+  const [transaction, setTransaction] = useState([])
   const [selectedDateRange, setSelectedDateRange] = useState({
     start: moment().format("YYYY-MM-DD 00:00"),
     end: moment().format("YYYY-MM-DD 23:59"),
@@ -73,6 +76,25 @@ function listDetail() {
         }
       });
       let resData = res.data;
+      setChart(resData)
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getGameList = async () => {
+    setLoading(true);
+    try {
+      let res = await axios({
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+        method: "get",
+        url: `${hostname}/game/getGameList`,
+      });
+      let resData = res.data;
+      setGameList(resData)
       setChart(resData)
       setLoading(false);
     } catch (error) {
@@ -114,7 +136,40 @@ function listDetail() {
     }
   };
 
-  console.log('dataGame', dataGame)
+  const getDataGameTransaction = async () => {
+    setLoading(true);
+    try {
+      let res = await axios({
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+        method: "post",
+        url: `${hostname}/transaction/get_transaction_by_gamename`,
+        data: {
+          "game_name": rowData.game_name
+        }
+      });
+
+      let resData = res.data
+      let no = 1
+      resData.map((item) => {
+        item.no = no++
+        item.sumAmountGame = res.data.sumAmountGame
+        item.sumResultGame = res.data.sumResultGame
+        item.count = res.data.count
+        item.sumTotal = res.data.sum
+        item.create_at = moment(item.create_at).format('DD/MM/YYYY HH:mm')
+      })
+
+      setTransaction(resData)
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log('transaction', transaction)
+
 
   const options = {
     responsive: true,
@@ -264,63 +319,40 @@ function listDetail() {
   };
 
 
-  const columnsMember = [
+  const columns = [
     {
-      title: '',
-      dataIndex: 'game_img',
-      align: 'left',
-      width: 250,
+      title: 'ลำดับ',
+      dataIndex: 'no',
+      align: 'center',
+      sorter: (record1, record2) => record1.no - record2.no,
       render: (item, data) => (
-        <>
-          <Image
-            src={item}
-            width={250}
-            height={170}
-            alt="Picture of the author"
-          />
-        </>
-      ),
-
-
+        <Typography sx={{ fontSize: '14px', textAlign: 'center' }} >{item}</Typography>
+      )
     },
+
     {
-      title: 'เกม',
-      dataIndex: 'game_name',
-      align: 'left',
-      width: 250,
+      title: 'ชื่อผู้ใช้',
+      dataIndex: 'username',
       render: (item, data) => (
         <CopyToClipboard text={item}>
           <div style={{ "& .MuiButton-text": { "&:hover": { textDecoration: "underline blue 1px", } } }} >
             <Button
-              sx={{ fontSize: "14px", p: 0, color: "blue" }}
+              sx={{ fontSize: "14px", p: 0, color: "blue", }}
               onClick={handleClickSnackbar}
             >
               {item}
             </Button>
+            <Typography>{data.create_at}</Typography>
+            <Typography>{data.uuid}</Typography>
           </div>
         </CopyToClipboard>
       ),
-      ...getColumnSearchProps('game_name'),
+      ...getColumnSearchProps('username'),
 
     },
     {
-      dataIndex: "game_type",
-      title: "ประเภท",
-      align: "left",
-      width: 150,
-      sorter: (record1, record2) => record1.credit - record2.credit,
-      render: (item) => (
-        <Typography
-          style={{
-            fontSize: '14px'
-          }}
-        >{item}</Typography>
-      ),
-      ...getColumnSearchProps('game_type'),
-    },
-    {
-      dataIndex: "count",
-      title: "จำนวนการเล่น",
+      dataIndex: "game_name",
+      title: "เกม",
       align: "center",
       sorter: (record1, record2) => record1.credit - record2.credit,
       render: (item) => (
@@ -330,80 +362,96 @@ function listDetail() {
           }}
         >{item}</Typography>
       ),
+      ...getColumnSearchProps('game_name'),
     },
     {
-      dataIndex: "sumAmountGame",
-      title: "จำนวนการเดิมพันทั้งหมด",
-      align: "center",
-      width: 100,
-      sorter: (record1, record2) => record1.credit - record2.credit,
-      render: (item) => (
-        <Typography
-          style={{
-            fontSize: '14px'
-          }}
-        >{item}</Typography>
-      ),
-    },
-    {
-      dataIndex: "sumResultGame",
-      title: "ผลลัพธ์การเดิมพัน์",
-      align: "center",
-      sorter: (record1, record2) => record1.credit - record2.credit,
-      render: (item) => (
-        <Typography
-          style={{
-            fontSize: '14px'
-          }}
-        >{item}</Typography>
-      ),
-    },
-    {
-      dataIndex: "sumTotal",
-      title: "ผลต่างเดิมพัน",
-      align: "center",
-      width: 160,
-      render: (item) => (
-        <Typography
-          style={{
-            fontSize: '14px'
-          }}
-        >{item}</Typography>
-      ),
-    },
-    {
-      dataIndex: "game_status",
-      title: "สถานะ",
-      align: "center",
-      width: 160,
-      render: (item) => (
-        <Typography
-          style={{
-            fontSize: '14px'
-          }}
-        >{item}</Typography>
-      ),
-    },
-    {
-      dataIndex: "create_at",
-      title: "วันที่อัปโหลดเกม",
-      align: "center",
-      width: 160,
-      render: (item) => (
-        <Typography
-          style={{
-            fontSize: '14px'
-          }}
-        >{item}</Typography>
-      ),
-    },
-    {
-      dataIndex: "game_url",
-      title: "Demo",
-      align: "center",
+      dataIndex: "รายละเอียด",
+      title: "รายละเอียดการเดิมพัน",
+      align: "right",
       render: (item, data) => (
         <>
-          <a target='_blank' href={item}>Link Demo</a>
+          <Typography>Fast Spin : {data.fastSpin}</Typography>
+          <Typography>Free Spin Add : {data.freeSpinAdd}</Typography>
+          <Typography>Free Spin Left : {data.freeSpinLeft}</Typography>
+        </>
+
+      ),
+    },
+    {
+      dataIndex: "betAmount",
+      title: "จำนวนเดิมพัน",
+      align: "center",
+      sorter: (record1, record2) => record1.credit - record2.credit,
+      render: (item) => (
+        <Typography
+          style={{
+            fontSize: '14px'
+          }}
+        >{item}</Typography>
+      ),
+    },
+    {
+      dataIndex: "creditBefore",
+      title: "เครดิตก่อน bet",
+      align: "center",
+      ...getColumnSearchProps('creditBefore'),
+      render: (item) => (
+        <Typography
+          style={{
+            fontSize: '14px'
+          }}
+        >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
+      ),
+    },
+    {
+      dataIndex: "creditAfter",
+      title: "เครดิตหลัง bet",
+      align: "center",
+      ...getColumnSearchProps('creditAfter'),
+      render: (item) => (
+        <Typography
+          style={{
+            fontSize: '14px'
+          }}
+        >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
+      ),
+    },
+    {
+      dataIndex: "winTotal",
+      title: "ผลลัพธ์",
+      align: "center",
+      ...getColumnSearchProps('winTotal'),
+      render: (item) => (
+        <Typography>{item}</Typography>
+      ),
+    },
+    {
+      dataIndex: "bet_status",
+      title: "สถานะการเดิมพัน",
+      align: "center",
+      render: (item) => (
+        <Typography
+          style={{
+            fontSize: '14px'
+          }}
+        >{item}</Typography>
+      ),
+    },
+
+
+    {
+      dataIndex: "bet_detail",
+      title: "รายละเอียด",
+      align: "center",
+      render: (item) => (
+        <>
+          <IconButton
+          //   onClick={async () => {
+          //     router.push(`/listTransactionByUsername?username=${data.username}`)
+          //     }}
+          >
+            <ManageSearchIcon color="primary" />
+          </IconButton>
         </>
       ),
     },
@@ -411,6 +459,7 @@ function listDetail() {
 
   useEffect(() => {
     // getChart()
+    getGameList()
   }, [])
 
 
@@ -482,20 +531,23 @@ function listDetail() {
               <MenuItem selected disabled>
                 เลือกเกม
               </MenuItem>
-              <MenuItem value="Data 2 Dog game 2023">Data 2 Dog game 2023</MenuItem>
-              <MenuItem value="Cannabis">Cannabis Slot</MenuItem>
-              <MenuItem value="TheWitcher3">TheWitcher3</MenuItem>
-              <MenuItem value="CSGO">CSGO</MenuItem>
+              {
+                gameList.map((item => (
+                  <MenuItem value={item.game_name}>{item.game_name}</MenuItem>
+                )))
+              }
+
             </TextField>
             <Button
               variant="contained"
-              style={{ marginRight: "8px", marginTop: "8px", width: 300 }}
+              sx={{ ml: 2, mt: 1, width: 300 }}
               color="primary"
               size="large"
               type="submit"
               onClick={() => {
                 // getChart()
                 getDataGame()
+                getDataGameTransaction()
               }}
             >
               <Typography sx={{ color: '#ffff' }}>ค้นหา</Typography>
@@ -509,22 +561,70 @@ function listDetail() {
 
         <Grid container>
           <Grid item xs={6}>
-            <Grid container sx={{ bg: "pink" }}>
-              <Grid item xs={6} sx={{ mt: '7%' }}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+              alignItems="center" sx={{ bg: "pink" }} >
+              <Grid item xs={6} sx={{ mt: '7%', textAlign: 'center' }}>
+                { }
                 <Image
-                  src={dataGame[0]?.game_img}
-                  width={401}
-                  height={236}
+                  src={dataGame[0]?.game_img ? dataGame[0]?.game_img : noImg}
+                  width={250}
+                  height={170}
                   alt="Cannabis Slot IMG"
                 />
               </Grid>
               <Grid item xs={6} sx={{ mt: '7%' }}>
-                <Typography variant='h6' sx={{ mt: 1 }}>ชื่อเกม : {dataGame[0]?.game_name}</Typography>
+                {/* <Typography variant='h6' sx={{ mt: 1 }}>ชื่อเกม : {dataGame[0]?.game_name}</Typography>
                 <Typography variant='h6' sx={{ mt: 1 }}>ประเภท : {dataGame[0]?.game_type}</Typography>
                 <Typography variant='h6' sx={{ mt: 1 }}>วันที่อัปโหลดเกม : {dataGame[0]?.create_at}</Typography>
-                <Typography variant='h6' sx={{ mt: 1 }}>สถานะ : {dataGame[0]?.game_status}</Typography>
+                <Typography variant='h6' sx={{ mt: 1 }}>สถานะ : {dataGame[0]?.game_status}</Typography> */}
+
+                <TextField
+                  name="game_name"
+                  type="text"
+                  value={dataGame[0]?.game_name || ""}
+                  label="ชื่อเกม"
+                  size="medium"
+                  variant="standard"
+                  sx={{ bgcolor: "white", width: 300, mt: 1 }}
+                />
+
+                <TextField
+                  name="game_name"
+                  type="text"
+                  value={dataGame[0]?.game_type || ""}
+                  label="ประเภท"
+                  size="medium"
+                  variant="standard"
+                  sx={{ bgcolor: "white", width: 300, mt: 1 }}
+                />
+                <TextField
+                  name="game_name"
+                  type="text"
+                  value={dataGame[0]?.create_at || ""}
+                  label="วันที่อัปโหลดเกม"
+                  size="medium"
+                  variant="standard"
+                  sx={{ bgcolor: "white", width: 300, mt: 1 }}
+                />
+                <TextField
+                  name="game_name"
+                  type="text"
+                  value={dataGame[0]?.game_status || ""}
+                  label="สถานะ"
+                  size="lageng"
+                  variant="standard"
+                  sx={{bgcolor: "white", width: 300, mt: 1}}
+                  
+                />
                 <Typography variant='h6' sx={{ mt: 2 }}><a target='_blank' href={dataGame[0]?.game_url}>Link Demo</a></Typography>
+
+
+
               </Grid>
+
 
             </Grid>
           </Grid>
@@ -603,8 +703,8 @@ function listDetail() {
           alignItems="center" spacing={2}>
           <Grid item xs={12}>
             <Table
-              columns={columnsMember}
-              dataSource={dataGame}
+              columns={columns}
+              dataSource={transaction}
               onChange={onChange}
               size="small"
               pagination={{

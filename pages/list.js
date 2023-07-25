@@ -257,17 +257,17 @@ function list() {
       ),
     },
     {
-      dataIndex: "bet_amount_before",
+      dataIndex: "count",
       title: "จำนวนรอบเดิมพัน",
       align: "center",
       width: 160,
-      ...getColumnSearchProps('bet_amount_before'),
+      ...getColumnSearchProps('count'),
       render: (item) => (
         <Typography
           style={{
             fontSize: '14px'
           }}
-        >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
+        >{Intl.NumberFormat("TH").format(item)}</Typography>
       ),
     },
     {
