@@ -15,6 +15,11 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 
 export const menuSuperAdmin = [
   {
+    name: "Dashboard",
+    link: "/dashboard",
+    icon: <GroupsIcon />,
+  },
+  {
     name: "รายการ แพ้/ชนะ",
     link: "/list",
     icon: <AccountBalanceIcon />,
