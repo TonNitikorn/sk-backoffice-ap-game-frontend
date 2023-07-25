@@ -29,6 +29,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import ClearIcon from '@mui/icons-material/Clear';
 import Swal from "sweetalert2";
 import EditIcon from '@mui/icons-material/Edit';
+import PageviewIcon from '@mui/icons-material/Pageview';
 
 function customGame() {
     const router = useRouter();
@@ -189,6 +190,7 @@ function customGame() {
             title: 'No',
             dataIndex: 'no',
             align: 'center',
+            width: 80,
             sorter: (record1, record2) => record1.no - record2.no,
             render: (item, data) => (
                 <Typography sx={{ fontSize: '14px', textAlign: 'center' }} >{item}</Typography>
@@ -299,7 +301,7 @@ function customGame() {
             title: 'Game Status',
             dataIndex: 'game_status',
             align: 'left',
-            width: 100,
+            width: 140,
             render: (item, data) => (
                 <Typography
                     style={{
@@ -310,10 +312,26 @@ function customGame() {
             ...getColumnSearchProps('game_status'),
 
         },
-
+        {
+            title: "Detail",
+            align: "center",
+            width: 80,
+            render: (item, data) => (
+                <>
+                    <IconButton
+                        onClick={async () => {
+                            router.push(`/listDetail?game_name=${data.game_name}`);
+                        }}
+                    >
+                        <PageviewIcon color="primary" />
+                    </IconButton>
+                </>
+            ),
+        },
         {
             title: "Edit",
             align: "center",
+            width: 80,
             render: (item, data) => (
                 <>
                     <IconButton
