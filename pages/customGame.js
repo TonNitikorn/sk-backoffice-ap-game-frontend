@@ -9,6 +9,11 @@ import {
     Snackbar,
     Alert,
     IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    MenuItem,
+    DialogActions,
 } from "@mui/material";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import moment from "moment";
@@ -20,20 +25,26 @@ import SearchIcon from '@mui/icons-material/Search';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { useRouter } from "next/router";
 import Image from "next/image";
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import ClearIcon from '@mui/icons-material/Clear';
+import Swal from "sweetalert2";
+import EditIcon from '@mui/icons-material/Edit';
 
 function customGame() {
     const router = useRouter();
     const searchInput = useRef(null);
-    const [selectedDateRange, setSelectedDateRange] = useState({
-        start: moment().format("YYYY-MM-DD 00:00"),
-        end: moment().format("YYYY-MM-DD 23:59"),
-    });
     const [open, setOpen] = useState(false)
-    const [username, setUsername] = useState("");
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [gameList, setGameList] = useState([])
+    const [openDialogAdd, setOpenDialogAdd] = useState(false)
+    const [openDialogEdit, setOpenDialogEdit] = useState(false)
+
+    const [logo, setLogo] = useState([])
+    const [render, setRender] = useState(false)
+    const [rowData, setRowData] = useState()
+
 
     const getGameList = async (type, start, end) => {
         setLoading(true);
@@ -167,6 +178,11 @@ function customGame() {
         setOpen(false);
     };
 
+    const handleChangeData = async (e) => {
+        setRowData({ ...rowData, [e.target.name]: e.target.value });
+
+    };
+
 
     const columnsGame = [
         {
@@ -208,24 +224,24 @@ function customGame() {
             ...getColumnSearchProps('game_name'),
 
         },
-        {
-            dataIndex: "game_img",
-            title: "Logo",
-            align: "left",
-            width: 200,
-            sorter: (record1, record2) => record1.credit - record2.credit,
-            render: (item) => (
-                <Grid item xs={3} sx={{ mt: 1 }}>
-                    <Image
-                        src={item}
-                        alt="logo"
-                        width={50}
-                        height={50}
-                    />
-                </Grid>
-            ),
-            ...getColumnSearchProps('fullname'),
-        },
+        // {
+        //     dataIndex: "game_img",
+        //     title: "Logo",
+        //     align: "left",
+        //     width: 200,
+        //     sorter: (record1, record2) => record1.credit - record2.credit,
+        //     render: (item) => (
+        //         <Grid item xs={3} sx={{ mt: 1 }}>
+        //             <Image
+        //                 src={item}
+        //                 alt="logo"
+        //                 width={150}
+        //                 height={80}
+        //             />
+        //         </Grid>
+        //     ),
+        //     ...getColumnSearchProps('fullname'),
+        // },
         {
             title: 'link',
             dataIndex: 'game_url',
@@ -296,22 +312,168 @@ function customGame() {
         },
 
         {
-            dataIndex: "bet_detail",
-            title: "รายละเอียดการเดิมพัน",
+            title: "Edit",
             align: "center",
             render: (item, data) => (
                 <>
                     <IconButton
                         onClick={async () => {
-                            router.push(`/listTransactionByUsername?username=${data.username}`)
+                            setRowData(data)
+                            // logo.push({
+                            //     img_url: data.game_img,
+                            //     type: "logo",
+                            //     // file: file
+                            // })
+                            setLogo([{
+                                img_url: data.game_img,
+                                type: "logo",
+                                // file: file
+                            }])
+                            setRender(!render)
+                            setOpenDialogEdit(true)
+
                         }}
                     >
-                        <ManageSearchIcon color="primary" />
+                        <EditIcon color="primary" />
                     </IconButton>
                 </>
             ),
         },
     ]
+
+    const uploadLogo = async (e) => {
+        let file = e.target.files[0];
+        let reader = new FileReader();
+        reader.onloadend = () => {
+            logo.push({
+                img_url: reader.result,
+                type: "logo",
+                file: file
+            })
+            setRender(!render)
+
+        };
+        reader.readAsDataURL(file);
+    };
+
+
+    const createGame = async (type) => {
+        setLoading(true);
+        try {
+            const tempLogo = logo.filter(item => !item.uuid)
+            if (tempLogo) {
+                for (const item of tempLogo) {
+                    const formData = new FormData();
+                    formData.append("upload", item.file);
+                    formData.append("game_name", rowData.game_name);
+                    formData.append("game_status", rowData.game_status);
+                    formData.append("game_type", rowData.game_type);
+                    formData.append("game_url", rowData.game_url);
+                    let res = await axios({
+                        headers: {
+                            Authorization: "Bearer " + localStorage.getItem("TOKEN"),
+                        },
+                        method: "post",
+                        url: `${hostname}/game/createGame`,
+                        data: formData,
+                    });
+
+                    if (res.data.message === "success") {
+                        setOpenDialogAdd(false)
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Create game success",
+                            showConfirmButton: false,
+                            timer: 2000,
+                        });
+                    }
+
+                }
+            }
+            setLoading(false);
+
+        } catch (error) {
+            console.log(error);
+            if (
+                error.response.data.error.status_code === 401 &&
+                error.response.data.error.message === "Unauthorized"
+            ) {
+                dispatch(signOut());
+                localStorage.clear();
+                router.push("/auth/login");
+            }
+            if (
+                error.response.status === 401 &&
+                error.response.data.error.message === "Invalid Token"
+            ) {
+                dispatch(signOut());
+                localStorage.clear();
+                router.push("/auth/login");
+            }
+        }
+
+    }
+
+    const editGame = async (type) => {
+        setLoading(true);
+        try {
+            const tempLogo = logo.filter(item => !item.uuid)
+            if (tempLogo) {
+                for (const item of tempLogo) {
+                    const formData = new FormData();
+                    formData.append("upload", item.file);
+                    formData.append("game_name", rowData.game_name);
+                    formData.append("game_status", rowData.game_status);
+                    formData.append("game_type", rowData.game_type);
+                    formData.append("game_url", rowData.game_url);
+                    formData.append("uuid", rowData.uuid);
+
+                    let res = await axios({
+                        headers: {
+                            Authorization: "Bearer " + localStorage.getItem("TOKEN"),
+                        },
+                        method: "post",
+                        url: `${hostname}/game/updateGame`,
+                        data: formData,
+                    });
+
+                    if (res.data.message === "success") {
+                        setOpenDialogEdit(false)
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Update game success",
+                            showConfirmButton: false,
+                            timer: 2000,
+                        });
+                    }
+
+                }
+            }
+            setLoading(false);
+
+        } catch (error) {
+            console.log(error);
+            if (
+                error.response.data.error.status_code === 401 &&
+                error.response.data.error.message === "Unauthorized"
+            ) {
+                dispatch(signOut());
+                localStorage.clear();
+                router.push("/auth/login");
+            }
+            if (
+                error.response.status === 401 &&
+                error.response.data.error.message === "Invalid Token"
+            ) {
+                dispatch(signOut());
+                localStorage.clear();
+                router.push("/auth/login");
+            }
+        }
+
+    }
 
     useEffect(() => {
         getGameList()
@@ -320,120 +482,23 @@ function customGame() {
     return (
         <Layout>
             <Paper sx={{ p: 2, mb: 2 }}>
-                <Typography variant="h5" sx={{ mb: 2 }}>จัดการเกมส์</Typography>
-                <Grid container>
-                    <Grid item={true} xs={12} sx={{ mb: 3, }}>
-                        <TextField
-                            label="เริ่ม"
-                            style={{
-                                marginRight: "8px",
-                                marginTop: "8px",
-                                backgroundColor: "white",
-                                borderRadius: 4,
-                            }}
-                            variant="outlined"
-                            size="small"
-                            type="datetime-local"
-                            name="start"
-                            value={selectedDateRange.start}
-                            onChange={(e) => {
-                                setSelectedDateRange({
-                                    ...selectedDateRange,
-                                    [e.target.name]: e.target.value,
-                                });
-                            }}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
-                        <TextField
-                            label="สิ้นสุด"
-                            style={{
-                                marginRight: "8px",
-                                marginTop: "8px",
-                                color: "white",
-                                backgroundColor: "white",
-                                borderRadius: 4,
-                            }}
-                            variant="outlined"
-                            size="small"
-                            type="datetime-local"
-                            name="end"
-                            value={selectedDateRange.end}
-                            onChange={(e) => {
-                                setSelectedDateRange({
-                                    ...selectedDateRange,
-                                    [e.target.name]: e.target.value,
-                                });
-                            }}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            required
-                        />
-
-                        <TextField
-                            name="username"
-                            type="text"
-                            value={username || ""}
-                            label="ค้นหาโดยใช้ Username"
-                            placeholder="ค้นหาโดยใช้ Username"
-                            onChange={(e) => setUsername(e.target.value)}
-                            variant="outlined"
-                            size="small"
-                            sx={{ mr: 2, mt: 1 }}
-                        />
-                        <Button
-                            variant="contained"
-                            style={{ marginRight: "8px", marginTop: "8px", width: 300 }}
-                            color="primary"
-                            size="large"
-                            type="submit"
-                            onClick={() => {
-                                getGameList();
-                            }}
-                        >
-                            <Typography sx={{ color: '#ffff' }}>ค้นหา</Typography>
-                        </Button>
-
-                        {/* <Button
-              variant="contained"
-              style={{
-                marginRight: "8px",
-                marginTop: "8px",
-                backgroundColor: "#FFB946",
-              }}
-              size="large"
-              onClick={async () => {
-                let start = moment()
-                  .subtract(1, "days")
-                  .format("YYYY-MM-DD 00:00");
-                let end = moment()
-                  .subtract(1, "days")
-                  .format("YYYY-MM-DD 23:59");
-                getReport("yesterday", start, end);
-              }}
-            >
-              <Typography sx={{ color: '#ffff' }}>เมื่อวาน</Typography>
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                marginRight: "8px",
-                marginTop: "8px",
-                backgroundColor: "#129A50",
-              }}
-              size="large"
-              onClick={async () => {
-                let start = moment().format("YYYY-MM-DD 00:00");
-                let end = moment().format("YYYY-MM-DD 23:59");
-                getReport("today", start, end);
-              }}
-            >
-              <Typography sx={{ color: '#ffff' }}>วันนี้</Typography>
-            </Button> */}
-
-                    </Grid>
+                <Grid container justifyContent='space-between'>
+                    <Typography variant="h5" sx={{ mb: 2 }}>จัดการเกมส์</Typography>
+                    <Button
+                        variant="contained"
+                        style={{ marginRight: "8px", marginTop: "8px", width: 200 }}
+                        color="primary"
+                        size="large"
+                        type="submit"
+                        onClick={() => {
+                            setRowData({})
+                            setLogo([])
+                            setOpenDialogAdd(true)
+                        }}
+                    >
+                        <SportsEsportsIcon fontSize="large" />
+                        <Typography sx={{ color: '#ffff', ml: 1 }}> Add game</Typography>
+                    </Button>
                 </Grid>
             </Paper>
 
@@ -453,6 +518,277 @@ function customGame() {
                     }}
                 />
             </Grid>
+
+            <Dialog
+                open={openDialogAdd}
+                onClose={() => setOpenDialogAdd(false)}
+                fullWidth
+                maxWidth="md"
+            >
+                <DialogTitle sx={{ mt: 1 }} > <SportsEsportsIcon color="primary" fontSize="large" /> Add game </DialogTitle>
+
+                <DialogContent>
+                    <Grid container justifyContent="center">
+                        <Grid container spacing={2} >
+                            <Grid container item xs={6}>
+                                <Typography>Game name *</Typography>
+                                <TextField
+                                    name="game_name"
+                                    type="text"
+                                    value={rowData?.game_name || ""}
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                />
+                            </Grid>
+
+                            <Grid container item xs={6}>
+                                <Typography>Game type *</Typography>
+                                <TextField
+                                    name="game_type"
+                                    type="text"
+                                    value={rowData?.game_type || ""}
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                >
+                                    <MenuItem selected disabled value>
+                                        select game type
+                                    </MenuItem>
+                                    <MenuItem value="slot">Slot</MenuItem>
+                                    <MenuItem value="plinko">Plinko</MenuItem>
+                                </TextField>
+                            </Grid>
+
+                            <Grid container item xs={6}>
+                                <Typography>Game Link *</Typography>
+                                <TextField
+                                    name="game_url"
+                                    type="text"
+                                    value={rowData?.game_url || ""}
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                />
+                            </Grid>
+
+                            <Grid container item xs={6}>
+                                <Typography>Status *</Typography>
+                                <TextField
+                                    name="game_status"
+                                    type="text"
+                                    value={rowData?.game_status || ""}
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                >
+                                    <MenuItem selected disabled value>
+                                        select game type
+                                    </MenuItem>
+                                    <MenuItem value="ACTIVE">Active</MenuItem>
+                                    <MenuItem value="INACTIVE">Inactive</MenuItem>
+                                </TextField>
+                            </Grid>
+
+                            <Grid item xs={12} container sx={{ mb: 2 }}>
+                                <Typography >Game Logo * </Typography>
+                                <Typography sx={{ color: '#41A3E3', ml: 1 }}> (ขนาดรูป 371 x 206 pixels)</Typography>
+                                <TextField
+                                    required
+                                    sx={{ bgcolor: "white" }}
+                                    fullWidth
+                                    size="large"
+                                    type="file"
+                                    onChange={() => {
+
+                                        uploadLogo()
+                                    }}
+                                />
+                            </Grid>
+                            {logo.length !== 0 ? <Grid item xs={12} container>
+                                <Grid container sx={{ pl: 2, mb: 1, borderRadius: '10px' }}>
+                                    {logo.map((item, index) => (
+                                        <>
+                                            <img src={item.img_url} width={371} height={206} />
+                                            <IconButton sx={{ mb: 22, ml: 2, mr: 2, bgcolor: '#41A3E3', color: '#eee', boxShadow: '2px 2px 10px #C3C1C1' }}
+                                                onClick={() => {
+                                                    logo.splice(index, 1)
+                                                    setRender(!render)
+                                                }} >
+                                                <ClearIcon fontSize="small" />
+                                            </IconButton>
+                                        </>
+                                    ))}
+
+                                </Grid>
+
+                            </Grid> : ''}
+
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        sx={{ mr: 2, mb: 2, mt: -2 }}
+                        color="primary"
+                        size="large"
+                        type="submit"
+                        onClick={() => {
+                            createGame("logo")
+                        }}
+                    >
+                        <SportsEsportsIcon fontSize="large" />
+                        <Typography sx={{ color: '#ffff', ml: 1 }}>Create game</Typography>
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
+
+
+            <Dialog
+                open={openDialogEdit}
+                onClose={() => setOpenDialogEdit(false)}
+                fullWidth
+                maxWidth="md"
+            >
+                <DialogTitle sx={{ mt: 1 }} > <EditIcon color="primary" fontSize="large" /> Edit game </DialogTitle>
+
+                <DialogContent>
+                    <Grid container justifyContent="center">
+                        <Grid container spacing={2} >
+                            <Grid container item xs={6}>
+                                <Typography>Game name *</Typography>
+                                <TextField
+                                    name="game_name"
+                                    type="text"
+                                    value={rowData?.game_name || ""}
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                />
+                            </Grid>
+
+                            <Grid container item xs={6}>
+                                <Typography>Game type *</Typography>
+                                <TextField
+                                    name="game_type"
+                                    type="text"
+                                    value={rowData?.game_type || ""}
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                >
+                                    <MenuItem selected disabled value>
+                                        select game type
+                                    </MenuItem>
+                                    <MenuItem value="slot">Slot</MenuItem>
+                                    <MenuItem value="plinko">Plinko</MenuItem>
+                                </TextField>
+                            </Grid>
+
+                            <Grid container item xs={6}>
+                                <Typography>Game Link *</Typography>
+                                <TextField
+                                    name="game_url"
+                                    type="text"
+                                    value={rowData?.game_url || ""}
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                />
+                            </Grid>
+
+                            <Grid container item xs={6}>
+                                <Typography>Status *</Typography>
+                                <TextField
+                                    name="game_status"
+                                    type="text"
+                                    value={rowData?.game_status || ""}
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                >
+                                    <MenuItem selected disabled value>
+                                        select game type
+                                    </MenuItem>
+                                    <MenuItem value="ACTIVE">Active</MenuItem>
+                                    <MenuItem value="INACTIVE">Inactive</MenuItem>
+                                </TextField>
+                            </Grid>
+
+                            <Grid item xs={12} container sx={{ mb: 2 }}>
+                                <Typography >Game Logo * </Typography>
+                                <Typography sx={{ color: '#41A3E3', ml: 1 }}> (ขนาดรูป 371 x 206 pixels)</Typography>
+                                <TextField
+                                    required
+                                    sx={{ bgcolor: "white" }}
+                                    fullWidth
+                                    size="large"
+                                    type="file"
+                                    onChange={uploadLogo}
+                                />
+                            </Grid>
+                            {logo.length !== 0 ? <Grid item xs={12} container>
+                                <Grid container sx={{ pl: 2, mb: 1, borderRadius: '10px' }}>
+                                    {logo.map((item, index) => (
+                                        <>
+                                            <img src={item.img_url} width={371} height={206} />
+                                            <IconButton sx={{ mb: 22, ml: 2, mr: 2, bgcolor: '#41A3E3', color: '#eee', boxShadow: '2px 2px 10px #C3C1C1' }}
+                                                onClick={() => {
+                                                    logo.splice(index, 1)
+                                                    setRender(!render)
+                                                }} >
+                                                <ClearIcon fontSize="small" />
+                                            </IconButton>
+                                        </>
+                                    ))}
+
+                                </Grid>
+
+                            </Grid> : ''}
+
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        sx={{ mr: 2, mb: 2, mt: -2 }}
+                        color="primary"
+                        size="large"
+                        type="submit"
+                        onClick={() => {
+                            editGame("logo")
+                        }}
+                    >
+                        <EditIcon fontSize="large" />
+                        <Typography sx={{ color: '#ffff', ml: 1 }}>Edit game</Typography>
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
+
 
 
             <LoadingModal open={loading} />

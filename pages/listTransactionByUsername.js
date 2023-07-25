@@ -204,8 +204,8 @@ function listTransactionByusername() {
                         >
                             {item}
                         </Button>
-                        <Typography>{data.create_at}</Typography>
-                        <Typography>{data.uuid}</Typography>
+                        <Typography sx={{ fontSize: "14px" }}>{data.create_at}</Typography>
+                        <Typography sx={{ fontSize: "12px" }}>{data.uuid}</Typography>
                     </div>
                 </CopyToClipboard>
             ),
@@ -232,9 +232,9 @@ function listTransactionByusername() {
             align: "right",
             render: (item, data) => (
                 <>
-                    <Typography>Fast Spin : {data.fastSpin}</Typography>
-                    <Typography>Free Spin Add : {data.freeSpinAdd}</Typography>
-                    <Typography>Free Spin Left : {data.freeSpinLeft}</Typography>
+                    <Typography sx={{ fontSize: "14px" }}>Fast Spin : {data.fastSpin}</Typography>
+                    <Typography sx={{ fontSize: "14px" }}>Free Spin Add : {data.freeSpinAdd}</Typography>
+                    <Typography sx={{ fontSize: "14px" }}>Free Spin Left : {data.freeSpinLeft}</Typography>
                 </>
 
             ),
@@ -284,7 +284,7 @@ function listTransactionByusername() {
             align: "center",
             ...getColumnSearchProps('winTotal'),
             render: (item) => (
-                <Typography>{item}</Typography>
+                <Typography sx={{ fontSize: "14px" }}>{item}</Typography>
             ),
         },
         {
@@ -457,7 +457,7 @@ function listTransactionByusername() {
                             <MenuItem value="SLOT">Slot</MenuItem>
                             <MenuItem value="PIKGO">Pikgo</MenuItem>
                         </TextField>
-                        
+
                     </Grid>
                 </Grid>
                 <Grid style={{ marginTop: "20px" }}>
