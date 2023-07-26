@@ -397,6 +397,7 @@ function customGame() {
                     });
 
                     if (res.data.message === "success") {
+                        getGameList()
                         setOpenDialogAdd(false)
                         Swal.fire({
                             position: "center",
@@ -457,6 +458,7 @@ function customGame() {
                     });
 
                     if (res.data.message === "success") {
+                        getGameList()
                         setOpenDialogEdit(false)
                         Swal.fire({
                             position: "center",
@@ -627,10 +629,7 @@ function customGame() {
                                     fullWidth
                                     size="large"
                                     type="file"
-                                    onChange={() => {
-
-                                        uploadLogo()
-                                    }}
+                                    onChange={uploadLogo}
                                 />
                             </Grid>
                             {logo.length !== 0 ? <Grid item xs={12} container>

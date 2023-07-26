@@ -97,18 +97,20 @@ function Layout({ children, page }) {
             width: drawerWidth,
             boxSizing: 'border-box',
             backgroundColor: "#eee",
+            color: '#000'
           },
           "& .MuiListItemButton-root": {
             "&:hover": {
-              backgroundColor: "#41A3E3",
+              backgroundColor: "#345481",
               borderRadius: "6px",
+              color: '#eee'
             },
           },
         }}
         variant="permanent"
         anchor="left"
       >
-        <Grid justifyContent="center" alignItems="center" sx={{ pl: 9, pt: 1 }}>
+        <Grid justifyContent="center" alignItems="center" sx={{ pl: 9, pt: 1  }}>
           <Image
             src={logo_angpao}
             alt="scb"
@@ -142,7 +144,7 @@ function Layout({ children, page }) {
                           sx={{
                             pl: 4,
                             borderRadius: "6px",
-                            backgroundColor: typeof window !== "undefined" ? window.location.pathname === `${e.link}` ? "#41A3E3" : '#eee' : ''
+                            backgroundColor: typeof window !== "undefined" ? window.location.pathname === `${e.link}` ? "#345481" : '#eee' : ''
                           }} onClick={() => router.push(e.link)}>
                           <ListItemIcon>
                             {e.icon}
@@ -182,7 +184,8 @@ function Layout({ children, page }) {
                   <ListItemButton onClick={() => router.push(item.link)}
                     sx={{
                       borderRadius: "6px",
-                      backgroundColor: typeof window !== "undefined" ? window.location.pathname === `${item.link}` ? "#41A3E3" : '#eee' : ''
+                      color: typeof window !== "undefined" ? window.location.pathname === `${item.link}` ? "#eee" : '#000' : '',
+                      backgroundColor: typeof window !== "undefined" ? window.location.pathname === `${item.link}` ? "#345481" : '#eee' : ''
                     }}
                   >
                     <ListItemIcon >
@@ -200,7 +203,7 @@ function Layout({ children, page }) {
 
         <Divider />
         <List>
-         
+
           <ListItem disablePadding>
             <ListItemButton
               onClick={async () => {
