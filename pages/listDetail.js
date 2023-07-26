@@ -115,7 +115,7 @@ function listDetail() {
         method: "post",
         url: `${hostname}/member/getGame`,
         data: {
-          "game_name": game_name ?  game_name :  rowData.game_name,
+          "game_name": game_name ? game_name : rowData.game_name,
           "username": username || '',
           "start_date": selectedDateRange.start,
           "end_date": selectedDateRange.end,
@@ -346,8 +346,8 @@ function listDetail() {
             >
               {item}
             </Button>
-            <Typography>{data.create_at}</Typography>
-            <Typography>{data.uuid}</Typography>
+            <Typography sx={{ fontSize: "14px" }}>{data.create_at}</Typography>
+            <Typography sx={{ fontSize: "12px" }}>{data.uuid}</Typography>
           </div>
         </CopyToClipboard>
       ),
@@ -374,9 +374,9 @@ function listDetail() {
       align: "right",
       render: (item, data) => (
         <>
-          <Typography>Fast Spin : {data.fastSpin}</Typography>
-          <Typography>Free Spin Add : {data.freeSpinAdd}</Typography>
-          <Typography>Free Spin Left : {data.freeSpinLeft}</Typography>
+          <Typography sx={{ fontSize: "14px" }}>Fast Spin : {data.fastSpin}</Typography>
+          <Typography sx={{ fontSize: "14px" }}>Free Spin Add : {data.freeSpinAdd}</Typography>
+          <Typography sx={{ fontSize: "14px" }}>Free Spin Left : {data.freeSpinLeft}</Typography>
         </>
 
       ),
@@ -426,7 +426,7 @@ function listDetail() {
       align: "center",
       ...getColumnSearchProps('winTotal'),
       render: (item) => (
-        <Typography>{item}</Typography>
+        <Typography sx={{ fontSize: "14px" }}>{item}</Typography>
       ),
     },
     {
@@ -463,14 +463,14 @@ function listDetail() {
 
   useEffect(() => {
     // getChart()
-    
+
 
     if (game_name) {
       getDataGame(game_name)
       getGameList()
       getDataGameTransaction()
     }
-    
+
     getGameList()
   }, [])
 
@@ -578,10 +578,10 @@ function listDetail() {
               justifyContent="center"
               alignItems="center" sx={{ bg: "pink" }} >
               <Grid item xs={6} sx={{ mt: '7%', textAlign: 'center' }}>
-               
+
                 <img
                   src={dataGame[0]?.game_img ? dataGame[0]?.game_img : noImg}
-                  width={371} 
+                  width={371}
                   height={206}
                   alt="img game"
                 />
@@ -627,8 +627,8 @@ function listDetail() {
                   label="สถานะ"
                   size="lageng"
                   variant="standard"
-                  sx={{bgcolor: "white", width: 300, mt: 1}}
-                  
+                  sx={{ bgcolor: "white", width: 300, mt: 1 }}
+
                 />
                 <Typography variant='h6' sx={{ mt: 2 }}><a target='_blank' href={dataGame[0]?.game_url}>Link Demo</a></Typography>
 
