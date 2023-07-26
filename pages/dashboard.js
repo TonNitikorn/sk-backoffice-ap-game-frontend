@@ -87,10 +87,10 @@ function dashboard() {
     labels: chartData.game_name,
     datasets: [
       {
-        label: 'Sales',
+        label: 'จำนวนการเดิมพัน',
         data: chartData.game_bet,
-        backgroundColor: 'rgba(54, 162, 235, 0.5)', // กำหนดสีพื้นหลังของแถวกราฟ
-        borderColor: 'rgba(54, 162, 235, 1)', // กำหนดสีเส้นของแถวกราฟ
+        backgroundColor: 'goldenrod', 
+        borderColor: 'goldenrod', 
         borderWidth: 1,
       },
     ],
@@ -109,10 +109,10 @@ function dashboard() {
     labels: chartData.count_name,
     datasets: [
       {
-        label: 'Sales',
+        label: 'จำนวนการกดเล่น',
         data: chartData.count_bet,
-        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-        borderColor: 'rgba(54, 162, 235, 1)', 
+        backgroundColor: 'pink',
+        borderColor: 'pink', 
         borderWidth: 1,
       },
     ],
@@ -131,13 +131,20 @@ function dashboard() {
     getChart()
   }, [])
 
-
+console.log('chartData', chartData)
   return (
     <Layout>
       <Paper sx={{ p: 3 }}>
 
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+
+          <h2>
+            เกมมาแรง
+            <Typography>{nameDataCount}</Typography>
+            {/* <Typography>{chartData?.rankCount}</Typography> */}
+            
+          </h2>
+          {/* <Grid item xs={6}>
 
             <Box
               sx={{
@@ -190,7 +197,7 @@ function dashboard() {
             >
                {nameDataCount[2]}
             </Box>
-          </Grid>
+          </Grid> */}
 
         </Grid>
 

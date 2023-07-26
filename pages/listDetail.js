@@ -468,6 +468,7 @@ function listDetail() {
     if (game_name) {
       getDataGame(game_name)
       getGameList()
+      getDataGameTransaction()
     }
     
     getGameList()
