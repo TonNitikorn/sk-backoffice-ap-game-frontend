@@ -25,7 +25,7 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 function listTransactionByusername() {
     const router = useRouter();
-    const { username } = router.query
+    const { usernameParam } = router.query
     const [selectedDateRange, setSelectedDateRange] = useState({
         start: moment().format("2023-06-01 00:00"),
         end: moment().format("YYYY-MM-DD 23:59"),
@@ -36,6 +36,7 @@ function listTransactionByusername() {
     const [open, setOpen] = useState(false)
     const [report, setReport] = useState([])
     const [loading, setLoading] = useState(false);
+    const [username, setUsername] = useState("")
 
     const getReport = async (type, start, end) => {
 
@@ -51,7 +52,7 @@ function listTransactionByusername() {
                 data: {
                     "start_date": type === undefined ? selectedDateRange.start : start,
                     "end_date": type === undefined ? selectedDateRange.end : end,
-                    "username": username
+                    "username": usernameParam ? usernameParam : username 
                 }
             });
 
@@ -320,10 +321,13 @@ function listTransactionByusername() {
     ]
 
     useEffect(() => {
-        getReport()
-    }, [username])
+        if (usernameParam) {
+            getReport()
+        }
+        
+    }, [usernameParam])
 
-
+console.log('usernameParam', usernameParam)
     return (
         <Layout>
             <Paper>

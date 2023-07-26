@@ -38,9 +38,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { CopyToClipboard } from "react-copy-to-clipboard"
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 function listDetail() {
   const searchInput = useRef(null);
+  const router = useRouter();
+  const { game_name } = router.query
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [rowData, setRowData] = useState({})
@@ -102,7 +105,7 @@ function listDetail() {
     }
   };
 
-  const getDataGame = async () => {
+  const getDataGame = async (game_name) => {
     setLoading(true);
     try {
       let res = await axios({
@@ -112,7 +115,7 @@ function listDetail() {
         method: "post",
         url: `${hostname}/member/getGame`,
         data: {
-          "game_name": rowData.game_name || 'Cannabis',
+          "game_name": game_name ?  game_name :  rowData.game_name,
           "username": username || '',
           "start_date": selectedDateRange.start,
           "end_date": selectedDateRange.end,
@@ -130,6 +133,7 @@ function listDetail() {
       })
 
       setDataGame(resData)
+      getGameList()
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -168,7 +172,7 @@ function listDetail() {
     }
   };
 
-  console.log('transaction', transaction)
+
 
 
   const options = {
@@ -459,9 +463,15 @@ function listDetail() {
 
   useEffect(() => {
     // getChart()
+    
+
+    if (game_name) {
+      getDataGame(game_name)
+      getGameList()
+    }
+    
     getGameList()
   }, [])
-
 
   return (
     <Layout>
@@ -567,12 +577,12 @@ function listDetail() {
               justifyContent="center"
               alignItems="center" sx={{ bg: "pink" }} >
               <Grid item xs={6} sx={{ mt: '7%', textAlign: 'center' }}>
-                { }
-                <Image
+               
+                <img
                   src={dataGame[0]?.game_img ? dataGame[0]?.game_img : noImg}
-                  width={250}
-                  height={170}
-                  alt="Cannabis Slot IMG"
+                  width={371} 
+                  height={206}
+                  alt="img game"
                 />
               </Grid>
               <Grid item xs={6} sx={{ mt: '7%' }}>
@@ -641,7 +651,7 @@ function listDetail() {
                 <Card sx={{ width: '100%', background: "linear-gradient(#0072B1, #41A3E3)" }}>
                   <CardContent>
                     <Typography variant="h7" sx={{ color: "#eee" }}>จำนวนการเล่น</Typography>
-                    <Typography variant="h5" sx={{ textAlign: "center", color: "#eee", mt: 2 }}>{dataGame[0]?.count} </Typography>
+                    <Typography variant="h5" sx={{ textAlign: "center", color: "#eee", mt: 2 }}>{Intl.NumberFormat("THB").format(dataGame[0]?.count)} </Typography>
                     <Grid sx={{ textAlign: 'right' }}>
                       <Button disabled>
                         <Typography sx={{ color: "#eee", mt: 1, mb: -2 }}>ครั้ง</Typography>
