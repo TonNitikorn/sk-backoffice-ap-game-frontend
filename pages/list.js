@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import Layout from '../theme/Layout'
-import MaterialTable from '@material-table/core'
 import {
   Paper,
   Button,
@@ -63,7 +62,6 @@ function list() {
     //   }
     }
   };
-  console.log('memberList', memberList)
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
@@ -278,7 +276,7 @@ function list() {
         <>
           <IconButton
             onClick={async () => {
-              router.push(`/listTransactionByUsername?username=${data.username}`)
+              router.push(`/listTransactionByUsername?usernameParam=${data.username}`)
             }}
           >
             <ManageSearchIcon color="primary" />

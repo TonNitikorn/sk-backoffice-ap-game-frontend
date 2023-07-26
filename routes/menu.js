@@ -4,8 +4,18 @@ import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 
 export const menuSuperAdmin = [
   {
-    name: "รายงานการเล่น",
+    name: "Dashboard",
+    link: "/dashboard",
+    icon: <GroupsIcon />,
+  },
+  {
+    name: "ประวัติการเล่นเกม",
     link: "/list",
+    icon: <GroupsIcon />,
+  },
+  {
+    name: "รายละเอียดการเล่นเกม",
+    link: "/listTransactionByUsername",
     icon: <GroupsIcon />,
   },
   {
