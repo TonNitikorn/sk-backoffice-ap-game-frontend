@@ -53,7 +53,7 @@ function customGame() {
             let res = await axios({
                 headers: { Authorization: "Bearer " + localStorage.getItem("access_token"), },
                 method: "get",
-                url: `${hostname}/game/getGameList`,
+                url: `${hostname}/game/getGameListAll`,
             });
             let resData = res.data;
             let no = 1;
@@ -185,6 +185,147 @@ function customGame() {
     };
 
 
+
+
+    const uploadLogo = async (e) => {
+        let file = e.target.files[0];
+        let reader = new FileReader();
+        reader.onloadend = () => {
+            logo.push({
+                img_url: reader.result,
+                type: "logo",
+                file: file
+            })
+            setRender(!render)
+
+        };
+        reader.readAsDataURL(file);
+    };
+
+
+    const createGame = async (type) => {
+        setLoading(true);
+        try {
+            const tempLogo = logo.filter(item => !item.uuid)
+            if (tempLogo) {
+                for (const item of tempLogo) {
+                    const formData = new FormData();
+                    formData.append("upload", item.file);
+                    formData.append("game_name", rowData.game_name);
+                    formData.append("game_status", rowData.game_status);
+                    formData.append("game_type", rowData.game_type);
+                    formData.append("game_url", rowData.game_url);
+                    formData.append("game_url_demo", rowData.game_url_demo);
+
+                    let res = await axios({
+                        headers: {
+                            Authorization: "Bearer " + localStorage.getItem("TOKEN"),
+                        },
+                        method: "post",
+                        url: `${hostname}/game/createGame`,
+                        data: formData,
+                    });
+
+                    if (res.data.message === "success") {
+                        getGameList()
+                        setOpenDialogAdd(false)
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Create game success",
+                            showConfirmButton: false,
+                            timer: 2000,
+                        });
+                    }
+
+                }
+            }
+            setLoading(false);
+
+        } catch (error) {
+            console.log(error);
+            if (
+                error.response.data.error.status_code === 401 &&
+                error.response.data.error.message === "Unauthorized"
+            ) {
+                dispatch(signOut());
+                localStorage.clear();
+                router.push("/auth/login");
+            }
+            if (
+                error.response.status === 401 &&
+                error.response.data.error.message === "Invalid Token"
+            ) {
+                dispatch(signOut());
+                localStorage.clear();
+                router.push("/auth/login");
+            }
+        }
+
+    }
+
+    const editGame = async (type) => {
+        setLoading(true);
+        try {
+            const tempLogo = logo.filter(item => !item.uuid)
+            if (tempLogo) {
+                for (const item of tempLogo) {
+                    const formData = new FormData();
+                    formData.append("upload", item.file);
+                    formData.append("game_name", rowData.game_name);
+                    formData.append("game_status", rowData.game_status);
+                    formData.append("game_type", rowData.game_type);
+                    formData.append("game_url", rowData.game_url);
+                    formData.append("uuid", rowData.uuid);
+                    formData.append("game_url_demo", rowData.game_url_demo);
+
+                    let res = await axios({
+                        headers: {
+                            Authorization: "Bearer " + localStorage.getItem("TOKEN"),
+                        },
+                        method: "post",
+                        url: `${hostname}/game/updateGame`,
+                        data: formData,
+                    });
+
+                    if (res.data.message === "success") {
+                        getGameList()
+                        setOpenDialogEdit(false)
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Update game success",
+                            showConfirmButton: false,
+                            timer: 2000,
+                        });
+                    }
+
+                }
+            }
+            setLoading(false);
+
+        } catch (error) {
+            console.log(error);
+            if (
+                error.response.data.error.status_code === 401 &&
+                error.response.data.error.message === "Unauthorized"
+            ) {
+                dispatch(signOut());
+                localStorage.clear();
+                router.push("/auth/login");
+            }
+            if (
+                error.response.status === 401 &&
+                error.response.data.error.message === "Invalid Token"
+            ) {
+                dispatch(signOut());
+                localStorage.clear();
+                router.push("/auth/login");
+            }
+        }
+
+    }
+
     const columnsGame = [
         {
             title: 'No',
@@ -245,7 +386,29 @@ function customGame() {
         //     ...getColumnSearchProps('fullname'),
         // },
         {
-            title: 'link',
+            title: 'Link Demo',
+            dataIndex: 'game_url_demo',
+            align: 'left',
+            width: 250,
+            render: (item, data) => (
+                <>
+                    <a
+                        onClick={() => {
+                            window.open(item, "_blank");
+                        }}
+                        style={{
+                            // "& .MuiButton-text": { "&:hover": { textDecoration: "underline blue 1px", } },
+                            fontSize: '14px'
+                        }}
+                    >Demo</a>
+                </>
+
+            ),
+            ...getColumnSearchProps('game_url'),
+
+        },
+        {
+            title: 'Link Game',
             dataIndex: 'game_url',
             align: 'left',
             width: 250,
@@ -359,142 +522,6 @@ function customGame() {
         },
     ]
 
-    const uploadLogo = async (e) => {
-        let file = e.target.files[0];
-        let reader = new FileReader();
-        reader.onloadend = () => {
-            logo.push({
-                img_url: reader.result,
-                type: "logo",
-                file: file
-            })
-            setRender(!render)
-
-        };
-        reader.readAsDataURL(file);
-    };
-
-
-    const createGame = async (type) => {
-        setLoading(true);
-        try {
-            const tempLogo = logo.filter(item => !item.uuid)
-            if (tempLogo) {
-                for (const item of tempLogo) {
-                    const formData = new FormData();
-                    formData.append("upload", item.file);
-                    formData.append("game_name", rowData.game_name);
-                    formData.append("game_status", rowData.game_status);
-                    formData.append("game_type", rowData.game_type);
-                    formData.append("game_url", rowData.game_url);
-                    let res = await axios({
-                        headers: {
-                            Authorization: "Bearer " + localStorage.getItem("TOKEN"),
-                        },
-                        method: "post",
-                        url: `${hostname}/game/createGame`,
-                        data: formData,
-                    });
-
-                    if (res.data.message === "success") {
-                        getGameList()
-                        setOpenDialogAdd(false)
-                        Swal.fire({
-                            position: "center",
-                            icon: "success",
-                            title: "Create game success",
-                            showConfirmButton: false,
-                            timer: 2000,
-                        });
-                    }
-
-                }
-            }
-            setLoading(false);
-
-        } catch (error) {
-            console.log(error);
-            if (
-                error.response.data.error.status_code === 401 &&
-                error.response.data.error.message === "Unauthorized"
-            ) {
-                dispatch(signOut());
-                localStorage.clear();
-                router.push("/auth/login");
-            }
-            if (
-                error.response.status === 401 &&
-                error.response.data.error.message === "Invalid Token"
-            ) {
-                dispatch(signOut());
-                localStorage.clear();
-                router.push("/auth/login");
-            }
-        }
-
-    }
-
-    const editGame = async (type) => {
-        setLoading(true);
-        try {
-            const tempLogo = logo.filter(item => !item.uuid)
-            if (tempLogo) {
-                for (const item of tempLogo) {
-                    const formData = new FormData();
-                    formData.append("upload", item.file);
-                    formData.append("game_name", rowData.game_name);
-                    formData.append("game_status", rowData.game_status);
-                    formData.append("game_type", rowData.game_type);
-                    formData.append("game_url", rowData.game_url);
-                    formData.append("uuid", rowData.uuid);
-
-                    let res = await axios({
-                        headers: {
-                            Authorization: "Bearer " + localStorage.getItem("TOKEN"),
-                        },
-                        method: "post",
-                        url: `${hostname}/game/updateGame`,
-                        data: formData,
-                    });
-
-                    if (res.data.message === "success") {
-                        getGameList()
-                        setOpenDialogEdit(false)
-                        Swal.fire({
-                            position: "center",
-                            icon: "success",
-                            title: "Update game success",
-                            showConfirmButton: false,
-                            timer: 2000,
-                        });
-                    }
-
-                }
-            }
-            setLoading(false);
-
-        } catch (error) {
-            console.log(error);
-            if (
-                error.response.data.error.status_code === 401 &&
-                error.response.data.error.message === "Unauthorized"
-            ) {
-                dispatch(signOut());
-                localStorage.clear();
-                router.push("/auth/login");
-            }
-            if (
-                error.response.status === 401 &&
-                error.response.data.error.message === "Invalid Token"
-            ) {
-                dispatch(signOut());
-                localStorage.clear();
-                router.push("/auth/login");
-            }
-        }
-
-    }
-
     useEffect(() => {
         getGameList()
     }, [])
@@ -591,6 +618,20 @@ function customGame() {
                                     name="game_url"
                                     type="text"
                                     value={rowData?.game_url || ""}
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                />
+                            </Grid>
+
+                            <Grid container item xs={6}>
+                                <Typography>Game Demo *</Typography>
+                                <TextField
+                                    name="game_url_demo"
+                                    type="text"
+                                    value={rowData?.game_url_demo || ""}
                                     fullWidth
                                     size="small"
                                     onChange={(e) => handleChangeData(e)}
@@ -725,6 +766,21 @@ function customGame() {
                                     name="game_url"
                                     type="text"
                                     value={rowData?.game_url || ""}
+                                    fullWidth
+                                    size="small"
+                                    onChange={(e) => handleChangeData(e)}
+                                    variant="outlined"
+                                    sx={{ bgcolor: "white" }}
+                                />
+                            </Grid>
+
+                            
+                            <Grid container item xs={6}>
+                                <Typography>Game Demo *</Typography>
+                                <TextField
+                                    name="game_url_demo"
+                                    type="text"
+                                    value={rowData?.game_url_demo || ""}
                                     fullWidth
                                     size="small"
                                     onChange={(e) => handleChangeData(e)}
