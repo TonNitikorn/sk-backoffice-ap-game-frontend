@@ -1,32 +1,8 @@
 import Layout from '../theme/Layout'
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Paper,
-  Button,
-  Grid,
-  Typography,
-  TextField,
-  Snackbar,
-  Alert,
-  Chip,
-  Card,
-  CardContent,
-  Box,
-  Radio,
-  IconButton,
-  MenuItem,
-} from "@mui/material";
+import { Paper, Button, Grid, Typography, TextField, Snackbar, Alert, Chip, Card, CardContent, Box, Radio, IconButton, MenuItem, Stack } from "@mui/material";
 import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  category
-} from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, category } from "chart.js";
 import moment from "moment";
 import axios from "axios";
 import noImg from "../assets/noImgFound.png"
@@ -53,6 +29,7 @@ function listDetail() {
   const [dataGame, setDataGame] = useState([])
   const [gameList, setGameList] = useState([])
   const [transaction, setTransaction] = useState([])
+  const [open, setOpen] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState({
     start: moment().format("YYYY-MM-DD 00:00"),
     end: moment().format("YYYY-MM-DD 23:59"),
@@ -60,6 +37,13 @@ function listDetail() {
 
   const handleChangeData = async (e) => {
     setRowData({ ...rowData, [e.target.name]: e.target.value });
+  };
+
+  const handleClickSnackbar = () => {
+    setOpen(true);
+  };
+  const handleClose = (event, reason) => {
+    setOpen(false);
   };
 
   const getChart = async () => {
@@ -171,9 +155,6 @@ function listDetail() {
       console.log(error);
     }
   };
-
-
-
 
   const options = {
     responsive: true,
@@ -315,12 +296,7 @@ function listDetail() {
     clearFilters();
   };
 
-  const handleClickSnackbar = () => {
-    setOpen(true);
-  };
-  const handleClose = (event, reason) => {
-    setOpen(false);
-  };
+
 
 
   const columns = [
@@ -570,7 +546,7 @@ function listDetail() {
 
       <Paper sx={{ p: 3, mt: 2 }}>
 
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={6}>
             <Grid
               container
@@ -578,65 +554,47 @@ function listDetail() {
               justifyContent="center"
               alignItems="center" sx={{ bg: "pink" }} >
               <Grid item xs={6} sx={{ mt: '7%', textAlign: 'center' }}>
-
-                <img
-                  src={dataGame[0]?.game_img ? dataGame[0]?.game_img : noImg}
-                  width={371}
-                  height={206}
-                  alt="img game"
-                />
-              </Grid>
-              <Grid item xs={6} sx={{ mt: '7%' }}>
-                {/* <Typography variant='h6' sx={{ mt: 1 }}>ชื่อเกม : {dataGame[0]?.game_name}</Typography>
-                <Typography variant='h6' sx={{ mt: 1 }}>ประเภท : {dataGame[0]?.game_type}</Typography>
-                <Typography variant='h6' sx={{ mt: 1 }}>วันที่อัปโหลดเกม : {dataGame[0]?.create_at}</Typography>
-                <Typography variant='h6' sx={{ mt: 1 }}>สถานะ : {dataGame[0]?.game_status}</Typography> */}
-
-                <TextField
-                  name="game_name"
-                  type="text"
-                  value={dataGame[0]?.game_name || ""}
-                  label="ชื่อเกม"
-                  size="medium"
-                  variant="standard"
-                  sx={{ bgcolor: "white", width: 300, mt: 1 }}
-                />
-
-                <TextField
-                  name="game_name"
-                  type="text"
-                  value={dataGame[0]?.game_type || ""}
-                  label="ประเภท"
-                  size="medium"
-                  variant="standard"
-                  sx={{ bgcolor: "white", width: 300, mt: 1 }}
-                />
-                <TextField
-                  name="game_name"
-                  type="text"
-                  value={dataGame[0]?.create_at || ""}
-                  label="วันที่อัปโหลดเกม"
-                  size="medium"
-                  variant="standard"
-                  sx={{ bgcolor: "white", width: 300, mt: 1 }}
-                />
-                <TextField
-                  name="game_name"
-                  type="text"
-                  value={dataGame[0]?.game_status || ""}
-                  label="สถานะ"
-                  size="lageng"
-                  variant="standard"
-                  sx={{ bgcolor: "white", width: 300, mt: 1 }}
-
-                />
-                <Typography variant='h6' sx={{ mt: 2 }}><a target='_blank' href={dataGame[0]?.game_url}>Link Demo</a></Typography>
-
-
+                {
+                  dataGame[0]?.game_img ?
+                    <img
+                      src={dataGame[0]?.game_img ? dataGame[0]?.game_img : noImg}
+                      width={371}
+                      height={206}
+                      alt="img game"
+                    /> :
+                    <Image
+                      src={noImg}
+                      width={300}
+                      height={206}
+                      alt="img game"
+                    />
+                }
 
               </Grid>
+              <Grid item xs={6} >
+                
+                <Grid container sx={{ mt: 4 }}>
 
-
+                  <Grid item xs={4} >
+                    <Stack spacing={0} >
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2, fontWeight: 'bold' }}>ชื่อเกม</Typography>
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2, fontWeight: 'bold' }}>ประเภท</Typography>
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2, fontWeight: 'bold' }}>วันที่อัปโหลด</Typography>
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2, fontWeight: 'bold' }}>สถานะ</Typography>
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2, fontWeight: 'bold' }}>Demo</Typography>
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={8} >
+                    <Stack spacing={0} >
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2 }}>{dataGame[0]?.game_name || "-"}</Typography>
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2 }}>{dataGame[0]?.game_type || "-"}</Typography>
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2 }}>{dataGame[0]?.create_at || "-"}</Typography>
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2 }}>{dataGame[0]?.game_status || "-"}</Typography>
+                      <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2 }}><a target='_blank' href={dataGame[0]?.game_url_demo}>Link Demo</a></Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
 
@@ -652,7 +610,7 @@ function listDetail() {
                 <Card sx={{ width: '100%', background: "linear-gradient(#0072B1, #41A3E3)" }}>
                   <CardContent>
                     <Typography variant="h7" sx={{ color: "#eee" }}>จำนวนการเล่น</Typography>
-                    <Typography variant="h5" sx={{ textAlign: "center", color: "#eee", mt: 2 }}>{Intl.NumberFormat("THB").format(dataGame[0]?.count)} </Typography>
+                    <Typography variant="h5" sx={{ textAlign: "center", color: "#eee", mt: 2 }}>{ dataGame[0]?.count ? Intl.NumberFormat("THB").format(dataGame[0]?.count) : ""} </Typography>
                     <Grid sx={{ textAlign: 'right' }}>
                       <Button disabled>
                         <Typography sx={{ color: "#eee", mt: 1, mb: -2 }}>ครั้ง</Typography>
@@ -711,7 +669,10 @@ function listDetail() {
         <Grid container
           direction="row"
           justifyContent="center"
-          alignItems="center" spacing={2}>
+          alignItems="center" 
+          spacing={2}
+          sx={{mt:5}}
+          >
           <Grid item xs={12}>
             <Table
               columns={columns}
@@ -756,6 +717,16 @@ function listDetail() {
         </Grid>
 
       </Paper>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          Copy success !
+        </Alert>
+      </Snackbar>
       <LoadingModal open={loading} />
     </Layout>
   )
