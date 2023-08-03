@@ -30,6 +30,7 @@ function listDetail() {
   const [gameList, setGameList] = useState([])
   const [transaction, setTransaction] = useState([])
   const [open, setOpen] = useState(false);
+  const [game_name_second, setGame_name_second] = useState('')
   const [selectedDateRange, setSelectedDateRange] = useState({
     start: moment().format("YYYY-MM-DD 00:00"),
     end: moment().format("YYYY-MM-DD 23:59"),
@@ -37,6 +38,7 @@ function listDetail() {
 
   const handleChangeData = async (e) => {
     setRowData({ ...rowData, [e.target.name]: e.target.value });
+    setGame_name_second(e.target.value)
   };
 
   const handleClickSnackbar = () => {
@@ -296,9 +298,6 @@ function listDetail() {
     clearFilters();
   };
 
-
-
-
   const columns = [
     {
       title: 'ลำดับ',
@@ -439,16 +438,14 @@ function listDetail() {
 
   useEffect(() => {
     // getChart()
-
-
     if (game_name) {
       getDataGame(game_name)
       getGameList()
       getDataGameTransaction()
+      setGame_name_second(game_name)
     }
-
     getGameList()
-  }, [])
+  }, [game_name])
 
   return (
     <Layout>
@@ -507,7 +504,7 @@ function listDetail() {
             <TextField
               name="game_name"
               type="text"
-              value={rowData.game_name || ""}
+              value={game_name_second ||""}
               label="เกม"
               size="small"
               onChange={(e) => handleChangeData(e)}
