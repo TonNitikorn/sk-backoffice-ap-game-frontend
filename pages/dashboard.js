@@ -131,7 +131,6 @@ function dashboard() {
     getChart()
   }, [])
 
-console.log('chartData', chartData)
   return (
     <Layout>
       <Paper sx={{ p: 3 }}>

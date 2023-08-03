@@ -134,7 +134,7 @@ function listDetail() {
         method: "post",
         url: `${hostname}/transaction/get_transaction_by_gamename`,
         data: {
-          "game_name": rowData.game_name
+          "game_name": game_name ? game_name : rowData.game_name,
         }
       });
 
@@ -566,15 +566,13 @@ function listDetail() {
                       src={noImg}
                       width={300}
                       height={206}
-                      alt="img game"
+                      alt="Img game"
                     />
                 }
 
               </Grid>
               <Grid item xs={6} >
-                
                 <Grid container sx={{ mt: 4 }}>
-
                   <Grid item xs={4} >
                     <Stack spacing={0} >
                       <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2, fontWeight: 'bold' }}>ชื่อเกม</Typography>
