@@ -298,10 +298,10 @@ function list() {
   return (
     <Layout>
       <Paper sx={{ p: 2, mb: 2 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>รายการการแพ้ชนะ</Typography>
+        <Typography variant="h5" sx={{ mb: 0 }}>รายการการแพ้ชนะ</Typography>
         <Grid container>
           <Grid item={true} xs={12} sx={{ mb: 3, }}>
-            <TextField
+            {/* <TextField
               label="เริ่ม"
               style={{
                 marginRight: "8px",
@@ -372,7 +372,7 @@ function list() {
               }}
             >
               <Typography sx={{ color: '#ffff' }}>ค้นหา</Typography>
-            </Button>
+            </Button> */}
 
             {/* <Button
               variant="contained"

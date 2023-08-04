@@ -44,7 +44,7 @@ function listDetail() {
   const handleClickSnackbar = () => {
     setOpen(true);
   };
-  
+
   const handleClose = (event, reason) => {
     setOpen(false);
   };
@@ -362,10 +362,12 @@ function listDetail() {
       title: "จำนวนเดิมพัน",
       align: "center",
       sorter: (record1, record2) => record1.credit - record2.credit,
-      render: (item) => (
+      render: (item, data) => (
         <Typography
           style={{
-            fontSize: '14px'
+            fontSize: '14px',
+            color: data.winTotal === '0' ? 'red' : "#129A50",
+            fontWeight: 'bold'
           }}
         >{item}</Typography>
       ),
@@ -375,10 +377,12 @@ function listDetail() {
       title: "เครดิตก่อน bet",
       align: "center",
       ...getColumnSearchProps('creditBefore'),
-      render: (item) => (
+      render: (item, data) => (
         <Typography
           style={{
-            fontSize: '14px'
+            fontSize: '14px',
+            color: data.winTotal === '0' ? 'red' : "#129A50",
+            fontWeight: 'bold'
           }}
         >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
       ),
@@ -388,10 +392,12 @@ function listDetail() {
       title: "เครดิตหลัง bet",
       align: "center",
       ...getColumnSearchProps('creditAfter'),
-      render: (item) => (
+      render: (item, data) => (
         <Typography
           style={{
-            fontSize: '14px'
+            fontSize: '14px',
+            color: data.winTotal === '0' ? 'red' : "#129A50",
+            fontWeight: 'bold'
           }}
         >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
       ),
@@ -401,8 +407,12 @@ function listDetail() {
       title: "ผลลัพธ์",
       align: "center",
       ...getColumnSearchProps('winTotal'),
-      render: (item) => (
-        <Typography sx={{ fontSize: "14px" }}>{item}</Typography>
+      render: (item, data) => (
+        <Typography sx={{
+          fontSize: "14px",
+          color: data.winTotal === '0' ? 'red' : "#129A50",
+          fontWeight: 'bold'
+        }}>{item}</Typography>
       ),
     },
     {
@@ -606,7 +616,7 @@ function listDetail() {
                 <Card sx={{ width: '100%', background: "linear-gradient(#0072B1, #41A3E3)" }}>
                   <CardContent>
                     <Typography variant="h7" sx={{ color: "#eee" }}>จำนวนการเล่น</Typography>
-                    <Typography variant="h5" sx={{ textAlign: "center", color: "#eee", mt: 2 }}>{ dataGame[0]?.count ? Intl.NumberFormat("THB").format(dataGame[0]?.count) : ""} </Typography>
+                    <Typography variant="h5" sx={{ textAlign: "center", color: "#eee", mt: 2 }}>{dataGame[0]?.count ? Intl.NumberFormat("THB").format(dataGame[0]?.count) : ""} </Typography>
                     <Grid sx={{ textAlign: 'right' }}>
                       <Button disabled>
                         <Typography sx={{ color: "#eee", mt: 1, mb: -2 }}>ครั้ง</Typography>
@@ -665,10 +675,10 @@ function listDetail() {
         <Grid container
           direction="row"
           justifyContent="center"
-          alignItems="center" 
+          alignItems="center"
           spacing={2}
-          sx={{mt:5}}
-          >
+          sx={{ mt: 5 }}
+        >
           <Grid item xs={12}>
             <Table
               columns={columns}

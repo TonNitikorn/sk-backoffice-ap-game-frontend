@@ -33,7 +33,7 @@ function listTransactionByusername() {
     });
     const searchInput = useRef(null);
     const [page, setPage] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
+    const [pageSize, setPageSize] = useState(20)
     const [open, setOpen] = useState(false)
     const [report, setReport] = useState([])
     const [loading, setLoading] = useState(false);
@@ -64,8 +64,8 @@ function listTransactionByusername() {
             let no = 1;
             resData.map((item) => {
                 item.no = no++;
-                item.create_at = moment(item.create_at).format('DD/MM/YYYY hh:mm')
-                item.update_at = moment(item.update_at).format('DD/MM/YYYY hh:mm')
+                item.create_at = moment(item.create_at).format('DD/MM/YYYY HH:mm')
+                item.update_at = moment(item.update_at).format('DD/MM/YYYY HH:mm')
                 item.prefix = item.prefix === null ? "-" : item.prefix
                 item.bet_detail = item.bet_detail === "" ? "-" : item.bet_detail
 
@@ -117,7 +117,7 @@ function listTransactionByusername() {
     const handleChangeData = async (e) => {
         setUsername_second(e.target.value)
         // setRowData({ ...rowData, [e.target.name]: e.target.value });
-        
+
 
     };
     const handleType = async (e) => {
@@ -130,13 +130,13 @@ function listTransactionByusername() {
     const handleChange = (event) => {
         setSetsubTypeCheck({ ...setsubTypeCheck, [event.target.name]: event.target.checked, });
 
-       
-        
+
+
     };
     console.log('subType', subType)
     console.log('game', game)
     console.log('setsubTypeCheck', setsubTypeCheck)
-    
+
 
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
@@ -301,10 +301,12 @@ function listTransactionByusername() {
             title: "จำนวนเดิมพัน",
             align: "center",
             sorter: (record1, record2) => record1.credit - record2.credit,
-            render: (item) => (
+            render: (item , data) => (
                 <Typography
                     style={{
-                        fontSize: '14px'
+                        fontSize: '14px',
+                        color: data.winTotal === '0' ? 'red' : "#129A50",
+                        fontWeight: 'bold'
                     }}
                 >{item}</Typography>
             ),
@@ -314,10 +316,12 @@ function listTransactionByusername() {
             title: "เครดิตก่อน bet",
             align: "center",
             ...getColumnSearchProps('creditBefore'),
-            render: (item) => (
+            render: (item, data) => (
                 <Typography
                     style={{
-                        fontSize: '14px'
+                        fontSize: '14px',
+                        color: data.winTotal === '0' ? 'red' : "#129A50",
+                        fontWeight: 'bold'
                     }}
                 >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
             ),
@@ -327,10 +331,12 @@ function listTransactionByusername() {
             title: "เครดิตหลัง bet",
             align: "center",
             ...getColumnSearchProps('creditAfter'),
-            render: (item) => (
+            render: (item, data) => (
                 <Typography
                     style={{
-                        fontSize: '14px'
+                        fontSize: '14px',
+                        color: data.winTotal === '0' ? 'red' : "#129A50",
+                        fontWeight: 'bold'
                     }}
                 >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
             ),
@@ -340,8 +346,12 @@ function listTransactionByusername() {
             title: "ผลลัพธ์",
             align: "center",
             ...getColumnSearchProps('winTotal'),
-            render: (item) => (
-                <Typography sx={{ fontSize: "14px" }}>{item}</Typography>
+            render: (item, data) => (
+                <Typography sx={{
+                    fontSize: "14px",
+                    color: data.winTotal === '0' ? 'red' : "#129A50",
+                    fontWeight: 'bold'
+                }}>{item}</Typography>
             ),
         },
         {
