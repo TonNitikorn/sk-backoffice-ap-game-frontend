@@ -13,6 +13,7 @@ import {
     FormGroup,
     IconButton,
     MenuItem,
+    FormLabel
 } from "@mui/material";
 import { Table, Input, Space, } from 'antd';
 import moment from "moment";
@@ -36,19 +37,15 @@ function listTransactionByusername() {
     const [open, setOpen] = useState(false)
     const [report, setReport] = useState([])
     const [loading, setLoading] = useState(false);
-    const [username, setUsername] = useState("")
-    const [chart, setChart] = useState([])
-    const [dataGame, setDataGame] = useState([])
     const [gameList, setGameList] = useState([])
     const [gameTypes, setGameTypes] = useState({})
     const [setsubTypeCheck, setSetsubTypeCheck] = useState({})
     const [username_second, setUsername_second] = useState('')
+    const [game, setGame] = useState([])
+    const [subType, setSubType] = useState([])
 
-    const getReport = async (usernameParam , type,start,end) => {
-        console.log('usernameParam', usernameParam)
-
+    const getReport = async (usernameParam, type, start, end) => {
         setLoading(true);
-
         try {
             let res = await axios({
                 headers: {
@@ -59,7 +56,7 @@ function listTransactionByusername() {
                 data: {
                     "start_date": type === undefined ? selectedDateRange.start : start,
                     "end_date": type === undefined ? selectedDateRange.end : end,
-                    "username": usernameParam ? usernameParam : username
+                    "username": usernameParam ? usernameParam : username_second
                 }
             });
 
@@ -100,7 +97,7 @@ function listTransactionByusername() {
                 url: `${hostname}/game/getGameList`,
             });
             let resData = res.data;
-            // setGameList(resData)
+            setGame(resData)
 
             let gameTypes = [];
             let dataGameType = resData.filter((item) => {
@@ -118,18 +115,28 @@ function listTransactionByusername() {
     };
 
     const handleChangeData = async (e) => {
+        setUsername_second(e.target.value)
         // setRowData({ ...rowData, [e.target.name]: e.target.value });
-        setGameTypes({ ...gameTypes, type: e.target.value })
-        let dataType = []
-        let subType = gameList.filter(item => item.game_type === e.target.value)
-        console.log('subType', subType)
+        
 
     };
+    const handleType = async (e) => {
+        setGameTypes({ ...gameTypes, type: e.target.value })
+        let temp = gameList.filter(item => item.game_type === e.target.value)
+        setSubType(...temp)
+        let tempData = game.filter(item => item.game_type === subType.game_type)
+    }
 
     const handleChange = (event) => {
         setSetsubTypeCheck({ ...setsubTypeCheck, [event.target.name]: event.target.checked, });
+
+       
+        
     };
+    console.log('subType', subType)
+    console.log('game', game)
     console.log('setsubTypeCheck', setsubTypeCheck)
+    
 
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
@@ -435,10 +442,10 @@ function listTransactionByusername() {
                         <TextField
                             name="username"
                             type="text"
-                            value={username || ""}
+                            value={username_second || ""}
                             label="ค้นหาโดยใช้ Username"
                             placeholder="ค้นหาโดยใช้ Username"
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e) => handleChangeData(e)}
                             variant="outlined"
                             size="small"
                             sx={{ mr: 2, mt: 1 }}
@@ -497,18 +504,18 @@ function listTransactionByusername() {
                     </Grid>
                 </Grid>
                 <Grid container sx={{ p: 2 }}>
-                    <Grid item={true} xs={12}>
+                    <Grid item xs={2}>
                         <Typography>Game Type :</Typography>
                         <TextField
                             name="username"
                             type="text"
                             select
                             label='เลือกประเภท'
-                            onChange={(e) => handleChangeData(e)}
+                            onChange={(e) => handleType(e)}
                             variant="outlined"
                             value={gameTypes.type || ""}
                             size="small"
-                            sx={{ mr: 2, mt: 1, width: 200 }}
+                            sx={{ mr: 2, mt: 1, width: '100%' }}
                         >
                             <MenuItem selected disabled>
                                 เลือกเกม
@@ -518,40 +525,37 @@ function listTransactionByusername() {
                                     <MenuItem value={item.game_type}>{item.game_type}</MenuItem>
                                 )))
                             }
-
                         </TextField>
-                        <FormControl
-                            // component="fieldset"
-                            variant="outlined"
-                            sx={{ display: 'flex', flexDirection: 'row', gap: '20px' }}
-                        >
-                            <FormGroup sx={{textAlign: 'left'}}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            defaultChecked={setsubTypeCheck?.grap || ""}
-                                        />
-                                    }
-                                    value={setsubTypeCheck.preference?.grap}
-                                    label="กราฟ"
-                                    onChange={handleChange}
-                                    name="grap"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            defaultChecked={setsubTypeCheck?.grap || ""}
-                                        />
-                                    }
-                                    value={setsubTypeCheck.preference?.grap}
-                                    label="กราฟ"
-                                    onChange={handleChange}
-                                    name="grap"
-                                />
-                            </FormGroup>
-                        </FormControl>
-
                     </Grid>
+                    <FormControl variant="outlined" sx={{ ml: 2 }}>
+                        <FormLabel component="legend"><Typography>เลือกเกม</Typography></FormLabel>
+                        <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        defaultChecked={setsubTypeCheck?.grap || ""}
+                                    />
+                                }
+                                value={setsubTypeCheck.preference?.grap}
+                                label="กราฟ"
+                                onChange={handleChange}
+                                name="grap"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        defaultChecked={setsubTypeCheck?.grap || ""}
+                                    />
+                                }
+                                value={setsubTypeCheck.preference?.grap}
+                                label="กราฟ"
+                                onChange={handleChange}
+                                name="grap"
+                            />
+                        </FormGroup>
+                    </FormControl>
+
+
                 </Grid>
                 <Grid style={{ marginTop: "20px" }}>
                     <Table
