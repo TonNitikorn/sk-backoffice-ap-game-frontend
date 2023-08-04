@@ -44,6 +44,15 @@ function listTransactionByusername() {
     const [game, setGame] = useState([])
     const [subType, setSubType] = useState([])
 
+    const [checkedItems, setCheckedItems] = useState({});
+
+    const handleChangeCheck = (event) => {
+        setCheckedItems({
+            ...checkedItems,
+            [event.target.name]: event.target.checked,
+        });
+    };
+
     const getReport = async (usernameParam, type, start, end) => {
         setLoading(true);
         try {
@@ -117,25 +126,22 @@ function listTransactionByusername() {
     const handleChangeData = async (e) => {
         setUsername_second(e.target.value)
         // setRowData({ ...rowData, [e.target.name]: e.target.value });
-
-
     };
     const handleType = async (e) => {
         setGameTypes({ ...gameTypes, type: e.target.value })
         let temp = gameList.filter(item => item.game_type === e.target.value)
-        setSubType(...temp)
-        let tempData = game.filter(item => item.game_type === subType.game_type)
+        let tempData = game.filter(item => item.game_type === temp[0].game_type)
+        setSubType(tempData)
     }
 
-    const handleChange = (event) => {
-        setSetsubTypeCheck({ ...setsubTypeCheck, [event.target.name]: event.target.checked, });
+    // const handleChange = (event) => {
+    //     setSetsubTypeCheck({ ...setsubTypeCheck, [event.target.name]: event.target.checked, });
 
-
-
-    };
+    // };
     console.log('subType', subType)
     console.log('game', game)
     console.log('setsubTypeCheck', setsubTypeCheck)
+    console.log('checkedItems', checkedItems)
 
 
     const onChange = (pagination, filters, sorter, extra) => {
@@ -537,31 +543,43 @@ function listTransactionByusername() {
                             }
                         </TextField>
                     </Grid>
-                    <FormControl variant="outlined" sx={{ ml: 2 }}>
+
+
+                    {/* <FormControl variant="outlined" sx={{ ml: 2 }}>
                         <FormLabel component="legend"><Typography>เลือกเกม</Typography></FormLabel>
                         <FormGroup aria-label="position" row>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        defaultChecked={setsubTypeCheck?.grap || ""}
-                                    />
-                                }
-                                value={setsubTypeCheck.preference?.grap}
-                                label="กราฟ"
-                                onChange={handleChange}
-                                name="grap"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        defaultChecked={setsubTypeCheck?.grap || ""}
-                                    />
-                                }
-                                value={setsubTypeCheck.preference?.grap}
-                                label="กราฟ"
-                                onChange={handleChange}
-                                name="grap"
-                            />
+                            {subType.map(item => {
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            defaultChecked={setsubTypeCheck?.grap || ""}
+                                        />
+                                    }
+                                    value={item.game_name}
+                                    label={item.game_name}
+                                    onChange={handleChange}
+                                    name={item.game_name}
+                                />
+                            })}
+                        </FormGroup>
+                    </FormControl> */}
+
+                    <FormControl component="fieldset" sx={{ ml: 2 }}>
+                        <FormLabel component="legend"><Typography>เลือกเกม</Typography></FormLabel>
+                        <FormGroup aria-label="position" row>
+                            {subType.map((item, index) => (
+                                <FormControlLabel
+                                    key={index}
+                                    control={
+                                        <Checkbox
+                                            checked={checkedItems[item.game_name] || false}
+                                            onChange={handleChangeCheck}
+                                            name={item.game_name}
+                                        />
+                                    }
+                                    label={item.game_name}
+                                />
+                            ))}
                         </FormGroup>
                     </FormControl>
 
