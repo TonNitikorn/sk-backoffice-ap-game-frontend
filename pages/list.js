@@ -33,6 +33,9 @@ function list() {
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [memberList, setMemberList] = useState([])
+  const [chart, setChart] = useState([])
+  const [dataGame, setDataGame] = useState([])
+  const [gameList, setGameList] = useState([])
 
   const getMemberList = async (type, start, end) => {
     setLoading(true);
@@ -42,7 +45,7 @@ function list() {
         method: "get",
         url: `${hostname}/transaction/get_allmember`,
       });
-      let resData = res.data;
+      let resData = res.data.member_list1;
       let no = 1;
       resData.map((item) => {
         item.no = no++;
@@ -52,16 +55,18 @@ function list() {
       setLoading(false);
     } catch (error) {
       console.log(error);
-    //   if (
-    //     error.response.data.error.status_code === 401 &&
-    //     error.response.data.error.message === "Unauthorized"
-    //   ) {
-    //     dispatch(signOut());
-    //     localStorage.clear();
-    //     router.push("/auth/login");
-    //   }
+      if (
+        error.response.data.error.status_code === 401 &&
+        error.response.data.error.message === "Unauthorized"
+      ) {
+        dispatch(signOut());
+        localStorage.clear();
+        router.push("/auth/login");
+      }
     }
   };
+
+
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
@@ -251,7 +256,7 @@ function list() {
           style={{
             fontSize: '14px'
           }}
-        >{item}</Typography>
+        >{Intl.NumberFormat("TH").format(item)}</Typography>
       ),
     },
     {

@@ -37,8 +37,15 @@ function listTransactionByusername() {
     const [report, setReport] = useState([])
     const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState("")
+    const [chart, setChart] = useState([])
+    const [dataGame, setDataGame] = useState([])
+    const [gameList, setGameList] = useState([])
+    const [gameTypes, setGameTypes] = useState({})
+    const [setsubTypeCheck, setSetsubTypeCheck] = useState({})
+    const [username_second, setUsername_second] = useState('')
 
-    const getReport = async (type, start, end) => {
+    const getReport = async (usernameParam , type,start,end) => {
+        console.log('usernameParam', usernameParam)
 
         setLoading(true);
 
@@ -52,7 +59,7 @@ function listTransactionByusername() {
                 data: {
                     "start_date": type === undefined ? selectedDateRange.start : start,
                     "end_date": type === undefined ? selectedDateRange.end : end,
-                    "username": usernameParam ? usernameParam : username 
+                    "username": usernameParam ? usernameParam : username
                 }
             });
 
@@ -81,6 +88,48 @@ function listTransactionByusername() {
             }
         }
     };
+
+    const getGameList = async () => {
+        setLoading(true);
+        try {
+            let res = await axios({
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token"),
+                },
+                method: "get",
+                url: `${hostname}/game/getGameList`,
+            });
+            let resData = res.data;
+            // setGameList(resData)
+
+            let gameTypes = [];
+            let dataGameType = resData.filter((item) => {
+                if (!gameTypes.includes(item.game_type)) {
+                    gameTypes.push(item.game_type);
+                    return true
+                }
+                return false
+            });
+            setGameList(dataGameType)
+            setLoading(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleChangeData = async (e) => {
+        // setRowData({ ...rowData, [e.target.name]: e.target.value });
+        setGameTypes({ ...gameTypes, type: e.target.value })
+        let dataType = []
+        let subType = gameList.filter(item => item.game_type === e.target.value)
+        console.log('subType', subType)
+
+    };
+
+    const handleChange = (event) => {
+        setSetsubTypeCheck({ ...setsubTypeCheck, [event.target.name]: event.target.checked, });
+    };
+    console.log('setsubTypeCheck', setsubTypeCheck)
 
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
@@ -322,12 +371,13 @@ function listTransactionByusername() {
 
     useEffect(() => {
         if (usernameParam) {
-            getReport()
+            getReport(usernameParam)
+            setUsername_second(usernameParam)
         }
-        
+        getGameList()
+
     }, [usernameParam])
 
-console.log('usernameParam', usernameParam)
     return (
         <Layout>
             <Paper>
@@ -405,7 +455,7 @@ console.log('usernameParam', usernameParam)
                         >
                             <Typography sx={{ color: '#ffff' }}>ค้นหา</Typography>
                         </Button>
-
+                        {/* เมื่อวาน */}
                         <Button
                             variant="contained"
                             style={{
@@ -426,6 +476,7 @@ console.log('usernameParam', usernameParam)
                         >
                             <Typography sx={{ color: '#ffff' }}>เมื่อวาน</Typography>
                         </Button>
+                        {/* วันนี้ */}
                         <Button
                             variant="contained"
                             style={{
@@ -452,15 +503,53 @@ console.log('usernameParam', usernameParam)
                             name="username"
                             type="text"
                             select
+                            label='เลือกประเภท'
+                            onChange={(e) => handleChangeData(e)}
                             variant="outlined"
-                            value={"ALL"}
+                            value={gameTypes.type || ""}
                             size="small"
                             sx={{ mr: 2, mt: 1, width: 200 }}
                         >
-                            <MenuItem value="ALL">ALL</MenuItem>
-                            <MenuItem value="SLOT">Slot</MenuItem>
-                            <MenuItem value="PIKGO">Pikgo</MenuItem>
+                            <MenuItem selected disabled>
+                                เลือกเกม
+                            </MenuItem>
+                            {
+                                gameList.map((item => (
+                                    <MenuItem value={item.game_type}>{item.game_type}</MenuItem>
+                                )))
+                            }
+
                         </TextField>
+                        <FormControl
+                            // component="fieldset"
+                            variant="outlined"
+                            sx={{ display: 'flex', flexDirection: 'row', gap: '20px' }}
+                        >
+                            <FormGroup sx={{textAlign: 'left'}}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            defaultChecked={setsubTypeCheck?.grap || ""}
+                                        />
+                                    }
+                                    value={setsubTypeCheck.preference?.grap}
+                                    label="กราฟ"
+                                    onChange={handleChange}
+                                    name="grap"
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            defaultChecked={setsubTypeCheck?.grap || ""}
+                                        />
+                                    }
+                                    value={setsubTypeCheck.preference?.grap}
+                                    label="กราฟ"
+                                    onChange={handleChange}
+                                    name="grap"
+                                />
+                            </FormGroup>
+                        </FormControl>
 
                     </Grid>
                 </Grid>

@@ -44,6 +44,7 @@ function listDetail() {
   const handleClickSnackbar = () => {
     setOpen(true);
   };
+  
   const handleClose = (event, reason) => {
     setOpen(false);
   };
@@ -504,7 +505,7 @@ function listDetail() {
             <TextField
               name="game_name"
               type="text"
-              value={game_name_second ||""}
+              value={game_name_second || ""}
               label="เกม"
               size="small"
               onChange={(e) => handleChangeData(e)}

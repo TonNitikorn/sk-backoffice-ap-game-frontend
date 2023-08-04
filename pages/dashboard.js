@@ -1,49 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import Layout from '../theme/Layout'
-import {
-  Paper,
-  Button,
-  Grid,
-  Typography,
-  TextField,
-  Snackbar,
-  Alert,
-  Chip,
-  Card,
-  CardContent,
-  Box,
-  Radio,
-  IconButton,
-  MenuItem,
-} from "@mui/material";
+import {Paper,Button,Grid,Typography, TextField,} from "@mui/material";
 import moment from "moment";
 import axios from "axios";
 import noImg from "../assets/noImgFound.png"
 import hostname from "../utils/hostname";
 import LoadingModal from "../theme/LoadingModal";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  category
-} from "chart.js";
-import Chart from 'chart.js/auto';
+import { Bar, Pie } from "react-chartjs-2";
 
 function dashboard() {
-
+  const [nameDataCount, setNameDataCount] = useState([])
   const [chartData, setChartData] = useState({})
   const [loading, setLoading] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState({
     start: moment().format("YYYY-MM-DD 00:00"),
     end: moment().format("YYYY-MM-DD 23:59"),
   });
-
-  const [nameDataCount, setNameDataCount] = useState([])
 
   const getChart = async () => {
     setLoading(true);
@@ -69,8 +41,6 @@ function dashboard() {
       let game_name = tempAmount.map(item => item.game_name)
       let game_bet = tempAmount.map(item => item.total_betAmount)
 
-
-
       let dataCount = tempCount.sort((a, b) => b.count_betAmount - a.count_betAmount);
       const rankCount = dataCount.slice(0, 3);
 
@@ -83,14 +53,16 @@ function dashboard() {
     }
   };
 
+  console.log('ChartData', chartData)
+
   const data = {
     labels: chartData.game_name,
     datasets: [
       {
         label: 'จำนวนการเดิมพัน',
         data: chartData.game_bet,
-        backgroundColor: 'goldenrod', 
-        borderColor: 'goldenrod', 
+        backgroundColor: 'goldenrod',
+        borderColor: 'goldenrod',
         borderWidth: 1,
       },
     ],
@@ -112,7 +84,7 @@ function dashboard() {
         label: 'จำนวนการกดเล่น',
         data: chartData.count_bet,
         backgroundColor: 'pink',
-        borderColor: 'pink', 
+        borderColor: 'pink',
         borderWidth: 1,
       },
     ],
@@ -125,6 +97,26 @@ function dashboard() {
         beginAtZero: true,
       },
     },
+  };
+
+  const dataPie = {
+    labels: chartData.count_name,
+    datasets: [
+      {
+        label: 'Pie Chart Example',
+        data: chartData.count_bet,
+        backgroundColor: [
+          'red',
+          'blue',
+          'yellow',
+          'green',
+          'purple',
+          'orange',
+        ], 
+        borderColor: 'rgba(0, 0, 0, 0.2)',
+        borderWidth: 1,
+      },
+    ],
   };
 
   useEffect(() => {
@@ -141,8 +133,12 @@ function dashboard() {
             เกมมาแรง
             <Typography>{nameDataCount}</Typography>
             {/* <Typography>{chartData?.rankCount}</Typography> */}
-            
+
           </h2>
+          <div>
+            <h2>Pie Chart Example</h2>
+            <Pie data={dataPie} />
+          </div>
           {/* <Grid item xs={6}>
 
             <Box
