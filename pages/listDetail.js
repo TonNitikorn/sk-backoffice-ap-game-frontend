@@ -367,9 +367,9 @@ function listDetail() {
           style={{
             fontSize: '14px',
             color: data.winTotal === '0' ? 'red' : "#129A50",
-            fontWeight: 'bold'
+            // fontWeight: 'bold'
           }}
-        >{item}</Typography>
+        >{Intl.NumberFormat('th', { style: 'currency', currency: 'THB' }).format(item)}</Typography>
       ),
     },
     {
@@ -382,9 +382,9 @@ function listDetail() {
           style={{
             fontSize: '14px',
             color: data.winTotal === '0' ? 'red' : "#129A50",
-            fontWeight: 'bold'
+            // fontWeight: 'bold'
           }}
-        >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
+        >{Intl.NumberFormat('th', { style: 'currency', currency: 'THB' }).format(item)}</Typography>
       ),
     },
     {
@@ -397,9 +397,9 @@ function listDetail() {
           style={{
             fontSize: '14px',
             color: data.winTotal === '0' ? 'red' : "#129A50",
-            fontWeight: 'bold'
+            // fontWeight: 'bold'
           }}
-        >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
+        >{Intl.NumberFormat('th', { style: 'currency', currency: 'THB' }).format(item)}</Typography>
       ),
     },
     {
@@ -411,8 +411,8 @@ function listDetail() {
         <Typography sx={{
           fontSize: "14px",
           color: data.winTotal === '0' ? 'red' : "#129A50",
-          fontWeight: 'bold'
-        }}>{item}</Typography>
+          // fontWeight: 'bold'
+        }}>{Intl.NumberFormat('th', { style: 'currency', currency: 'THB' }).format(item)}</Typography>
       ),
     },
     {

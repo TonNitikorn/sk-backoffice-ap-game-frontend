@@ -307,14 +307,14 @@ function listTransactionByusername() {
             title: "จำนวนเดิมพัน",
             align: "center",
             sorter: (record1, record2) => record1.credit - record2.credit,
-            render: (item , data) => (
+            render: (item, data) => (
                 <Typography
                     style={{
                         fontSize: '14px',
                         color: data.winTotal === '0' ? 'red' : "#129A50",
-                        fontWeight: 'bold'
+                        // fontWeight: 'bold'
                     }}
-                >{item}</Typography>
+                >{Intl.NumberFormat('th', { style: 'currency', currency: 'THB' }).format(item)}</Typography>
             ),
         },
         {
@@ -327,9 +327,9 @@ function listTransactionByusername() {
                     style={{
                         fontSize: '14px',
                         color: data.winTotal === '0' ? 'red' : "#129A50",
-                        fontWeight: 'bold'
+                        // fontWeight: 'bold'
                     }}
-                >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
+                >{Intl.NumberFormat('th', { style: 'currency', currency: 'THB' }).format(item)}</Typography>
             ),
         },
         {
@@ -342,9 +342,9 @@ function listTransactionByusername() {
                     style={{
                         fontSize: '14px',
                         color: data.winTotal === '0' ? 'red' : "#129A50",
-                        fontWeight: 'bold'
+                        // fontWeight: 'bold'
                     }}
-                >{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
+                >{Intl.NumberFormat('th', { style: 'currency', currency: 'THB' }).format(item)}</Typography>
             ),
         },
         {
