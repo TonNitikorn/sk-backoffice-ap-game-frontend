@@ -357,7 +357,7 @@ function listTransactionByusername() {
                     fontSize: "14px",
                     color: data.winTotal === '0' ? 'red' : "#129A50",
                     fontWeight: 'bold'
-                }}>{item}</Typography>
+                }}>{Intl.NumberFormat("TH").format(parseInt(item))}</Typography>
             ),
         },
         {
