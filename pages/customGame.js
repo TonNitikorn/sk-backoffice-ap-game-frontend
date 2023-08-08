@@ -269,7 +269,6 @@ function customGame() {
         try {
             if (logo[0].file !== undefined) {
 
-                console.log('first')
                 const tempLogo = logo.filter(item => !item.uuid)
                 if (tempLogo) {
                     for (const item of tempLogo) {
@@ -302,7 +301,6 @@ function customGame() {
 
             } if (logo[0].file) {
 
-                console.log('second')
                 let res = await axios({
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("TOKEN"),
