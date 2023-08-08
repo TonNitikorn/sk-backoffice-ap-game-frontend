@@ -267,41 +267,120 @@ function customGame() {
     const editGame = async (type) => {
         setLoading(true);
         try {
-            const tempLogo = logo.filter(item => !item.uuid)
-            if (tempLogo) {
-                for (const item of tempLogo) {
-                    const formData = new FormData();
-                    formData.append("upload", item.file);
-                    formData.append("game_name", rowData.game_name);
-                    formData.append("game_status", rowData.game_status);
-                    formData.append("game_type", rowData.game_type);
-                    formData.append("game_url", rowData.game_url);
-                    formData.append("uuid", rowData.uuid);
-                    formData.append("game_url_demo", rowData.game_url_demo);
+            if (logo[0].file !== undefined) {
 
-                    let res = await axios({
-                        headers: {
-                            Authorization: "Bearer " + localStorage.getItem("TOKEN"),
-                        },
-                        method: "post",
-                        url: `${hostname}/game/updateGame`,
-                        data: formData,
-                    });
+                console.log('first')
+                const tempLogo = logo.filter(item => !item.uuid)
+                if (tempLogo) {
+                    for (const item of tempLogo) {
+                        const formData = new FormData();
+                        formData.append("upload", item.file);
+                        formData.append("uuid", rowData.uuid);
 
-                    if (res.data.message === "success") {
-                        getGameList()
-                        setOpenDialogEdit(false)
-                        Swal.fire({
-                            position: "center",
-                            icon: "success",
-                            title: "Update game success",
-                            showConfirmButton: false,
-                            timer: 2000,
+                        let res = await axios({
+                            headers: {
+                                Authorization: "Bearer " + localStorage.getItem("TOKEN"),
+                            },
+                            method: "post",
+                            url: `${hostname}/game/updateGamesImg`,
+                            data: formData,
                         });
-                    }
 
+                        if (res.data.message === "success") {
+                            getGameList()
+                            setOpenDialogEdit(false)
+                            Swal.fire({
+                                position: "center",
+                                icon: "success",
+                                title: "Update game success",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            });
+                        }
+                    }
                 }
+
+            } if (logo[0].file) {
+
+                console.log('second')
+                let res = await axios({
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
+                    },
+                    method: "post",
+                    url: `${hostname}/game/updateGame`,
+                    data: {
+                        "game_name": rowData.game_name,
+                        "game_status": rowData.game_status,
+                        "game_type": rowData.game_type,
+                        "game_url": rowData.game_url,
+                        "uuid": rowData.uuid,
+                        "game_url_demo": rowData.game_url_demo,
+                    },
+                });
+
+                if (res.data.message === "success") {
+                    getGameList()
+                    setOpenDialogEdit(false)
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Update game success",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    });
+                }
+
+            } else {
+                const tempLogo = logo.filter(item => !item.uuid)
+                if (tempLogo) {
+                    for (const item of tempLogo) {
+                        const formData = new FormData();
+                        formData.append("upload", item.file);
+                        formData.append("uuid", rowData.uuid);
+
+                        let res = await axios({
+                            headers: {
+                                Authorization: "Bearer " + localStorage.getItem("TOKEN"),
+                            },
+                            method: "post",
+                            url: `${hostname}/game/updateGamesImg`,
+                            data: formData,
+                        });
+
+                        let data = await axios({
+                            headers: {
+                                Authorization: "Bearer " + localStorage.getItem("TOKEN"),
+                            },
+                            method: "post",
+                            url: `${hostname}/game/updateGame`,
+                            data: {
+                                "game_name": rowData.game_name,
+                                "game_status": rowData.game_status,
+                                "game_type": rowData.game_type,
+                                "game_url": rowData.game_url,
+                                "uuid": rowData.uuid,
+                                "game_url_demo": rowData.game_url_demo,
+                            },
+                        });
+
+                        if (res.data.message === "success") {
+                            getGameList()
+                            setOpenDialogEdit(false)
+                            Swal.fire({
+                                position: "center",
+                                icon: "success",
+                                title: "Update game success",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            });
+                        }
+                    }
+                }
+
+
             }
+
             setLoading(false);
 
         } catch (error) {
@@ -325,6 +404,8 @@ function customGame() {
         }
 
     }
+
+    console.log('logo', logo)
 
     const columnsGame = [
         {
@@ -774,7 +855,7 @@ function customGame() {
                                 />
                             </Grid>
 
-                            
+
                             <Grid container item xs={6}>
                                 <Typography>Game Demo *</Typography>
                                 <TextField
