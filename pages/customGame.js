@@ -55,7 +55,7 @@ function customGame() {
                 method: "get",
                 url: `${hostname}/game/getGameListAll`,
             });
-            let resData = res.data;
+            let resData = res.data.data;
             let no = 1;
             resData.map((item) => {
                 item.no = no++;
@@ -267,7 +267,8 @@ function customGame() {
     const editGame = async (type) => {
         setLoading(true);
         try {
-            if (logo[0].file !== undefined) {
+            if (logo[0].file) {
+                console.log('first')
 
                 const tempLogo = logo.filter(item => !item.uuid)
                 if (tempLogo) {
@@ -299,8 +300,8 @@ function customGame() {
                     }
                 }
 
-            } if (logo[0].file) {
-
+            } if (!logo[0].file) {
+                console.log('second')
                 let res = await axios({
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("TOKEN"),
@@ -317,19 +318,18 @@ function customGame() {
                     },
                 });
 
-                if (res.data.message === "success") {
-                    getGameList()
-                    setOpenDialogEdit(false)
-                    Swal.fire({
-                        position: "center",
-                        icon: "success",
-                        title: "Update game success",
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
-                }
+                getGameList()
+                setOpenDialogEdit(false)
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Update game success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                });
 
             } else {
+                console.log('third')
                 const tempLogo = logo.filter(item => !item.uuid)
                 if (tempLogo) {
                     for (const item of tempLogo) {

@@ -30,7 +30,7 @@ function dashboard() {
   const [chartData, setChartData] = useState({})
   const [loading, setLoading] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState({
-    start: moment().format("YYYY-MM-DD 00:00"),
+    start: moment().subtract(7, 'd').format("YYYY-MM-DD 00:00"),
     end: moment().format("YYYY-MM-DD 23:59"),
   });
 
@@ -46,8 +46,8 @@ function dashboard() {
         method: "post",
         url: `${hostname}/dashboard/sumBetAmount`,
         data: {
-          "end_date": "2023-07-26 23:59",
-          "start_date": "2023-06-01 00:00"
+          "start_date": selectedDateRange.start,
+          "end_date": selectedDateRange.end
         }
       });
 
@@ -73,7 +73,6 @@ function dashboard() {
       console.log(error);
     }
   };
-  console.log('chartData', chartData)
 
   const data = {
     labels: chartData.game_name,
@@ -81,8 +80,17 @@ function dashboard() {
       {
         label: 'จำนวนการเดิมพัน',
         data: chartData.game_bet,
-        backgroundColor: 'goldenrod',
-        borderColor: 'goldenrod',
+        backgroundColor: [
+          '#E0DADE',
+          '#c9c5a5',
+          '#9AA374',
+          '#979082',
+          '#7d7f63',
+          '#64685C',
+
+
+        ],
+        borderColor: '#FFFF',
         borderWidth: 1,
       },
     ],
@@ -101,10 +109,18 @@ function dashboard() {
     labels: chartData.count_name,
     datasets: [
       {
-        label: 'จำนวนการกดเล่น',
+        label: 'จำนวนการกดเล่น / ครั้ง',
         data: chartData.count_bet,
-        backgroundColor: 'pink',
-        borderColor: 'pink',
+        backgroundColor: [
+          '#ead7c1',
+          '#444b8e',
+          '#f6948e',
+          '#a84a7f',
+          '#2a9d8f',
+          '#e9c46a',
+
+        ],
+        borderColor: '#FFFF',
         borderWidth: 1,
       },
     ],
@@ -166,6 +182,53 @@ function dashboard() {
 
   };
 
+  const dataPieWin = {
+    labels: chartData.game_name,
+    datasets: [
+      {
+        label: 'Pie Chart Example',
+        data: chartData.game_bet,
+        backgroundColor: [
+          '#E0DADE',
+          '#52bf49',
+          '#176d10',
+          '#5dc555',
+          '#3b9534',
+          '#129A50',
+
+
+        ],
+        borderColor: '#FFFF',
+        borderWidth: 1,
+
+      },
+    ],
+
+  };
+
+  const dataPieLost = {
+    labels: chartData.game_name,
+    datasets: [
+      {
+        label: 'Pie Chart Example',
+        data: chartData.game_bet,
+        backgroundColor: [
+          '#E0DADE',
+          '#c9c5a5',
+          '#9AA374',
+          '#979082',
+          '#7d7f63',
+          '#BB2828',
+
+
+        ],
+        borderColor: '#FFFF',
+        borderWidth: 1,
+
+      },
+    ],
+
+  };
 
 
   const optionsPie = {
@@ -260,43 +323,54 @@ function dashboard() {
 
             </Grid>
           </Grid>
-          <Grid item xs={6} sm={8} md={5} sx={{textAlign:'center'}}>
-
-            {/* <Box sx={{ width: 300, height: 400, textAlign: 'center' }}> */}
-            <h3>กราฟแสดงตามจำนวนการเล่น</h3>
-            <Pie data={dataPie} options={optionsPie} />
-            {/* </Box> */}
-
-          </Grid>
-          <Grid item xs={6} sm={8} md={5} sx={{textAlign:'center'}}>
-
-            {/* <Box sx={{ width: 300, height: 400, textAlign: 'center' }}> */}
-            <h3>กราฟแสดงตามจำนวนการเดิมพัน</h3>
-            <Pie data={dataPieCount} options={optionsPie} />
-            {/* </Box> */}
-
-          </Grid>
-
-
-
-
         </Grid>
 
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <div>
-              <h2>Chart Bet Rank</h2>
-              <Bar data={data} options={options} />
-            </div>
+        <Grid container >
+          <Grid item xs={5} container justifyContent="center" >
+            <Box sx={{ width: 400, textAlign: 'start' }}>
+              <h2>กราฟแสดงตามจำนวนการเล่น</h2>
+              <Pie data={dataPie} options={optionsPie} />
+            </Box>
           </Grid>
-          <Grid item xs={6}>
-            <div>
-              <h2>Chart Bet Count</h2>
+
+          <Grid item xs={7}>
+            <Box sx={{ width: 600, bgcolor: 'white', ml: 2, mt: 15, textAlign: 'start' }}>
+              {/* <h2>Chart Bet Count</h2> */}
               <Bar data={dataCount} options={optionsCount} />
-            </div>
+            </Box>
           </Grid>
         </Grid>
 
+
+        <Grid container sx={{ mt: 2 }}>
+          <Grid item xs={6} container justifyContent="center"  >
+            <Box sx={{ width: 400, textAlign: 'start', mb: 10 }}>
+              <h2>กราฟแสดงการเล่นเกมชนะ</h2>
+              <Pie data={dataPieWin} options={optionsPie} />
+            </Box>
+          </Grid>
+          <Grid item xs={6} container justifyContent="center"  >
+            <Box sx={{ width: 400, textAlign: 'start', mb: 10 }}>
+              <h2>กราฟแสดงการเล่นเกมแพ้</h2>
+              <Pie data={dataPieLost} options={optionsPie} />
+            </Box>
+          </Grid>
+        </Grid>
+
+        <Grid container sx={{ mt: 2 }}>
+          <Grid item xs={5} container justifyContent="center"  >
+            <Box sx={{ width: 400, textAlign: 'start', mb: 10 }}>
+              <h2>กราฟแสดงตามจำนวนการเดิมพัน</h2>
+              <Pie data={dataPieCount} options={optionsPie} />
+            </Box>
+          </Grid>
+          <Grid item xs={7}>
+            <Box sx={{ width: 600, bgcolor: 'white', ml: 2, mt: 15, textAlign: 'start' }}>
+              {/* <h2>Chart Bet Rank</h2> */}
+              <Bar data={data} options={options} />
+            </Box>
+          </Grid>
+        </Grid>
 
 
       </Paper>

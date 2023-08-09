@@ -1,12 +1,14 @@
 import GroupsIcon from '@mui/icons-material/Groups';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
+import PersonIcon from '@mui/icons-material/Person';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
 export const menuSuperAdmin = [
   {
     name: "Dashboard",
     link: "/dashboard",
-    icon: <GroupsIcon />,
+    icon: <DashboardIcon />,
   },
   {
     name: "ประวัติการเล่นเกม",
@@ -14,9 +16,9 @@ export const menuSuperAdmin = [
     icon: <GroupsIcon />,
   },
   {
-    name: "รายละเอียดการเล่นเกม",
+    name: "ประวัติการเล่นเกม(รายคน)",
     link: "/listTransactionByUsername",
-    icon: <GroupsIcon />,
+    icon: <PersonIcon />,
   },
   {
     name: "จัดการเกม ",
