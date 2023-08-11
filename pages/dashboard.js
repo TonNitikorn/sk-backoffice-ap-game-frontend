@@ -53,6 +53,9 @@ function dashboard() {
 
       let tempAmount = res.data.sumBetAmount
       let tempCount = res.data.count_betAmount
+      let tempLose = res.data.sumBetLose
+      let tempWin = res.data.sumWin
+
 
       let count_name = tempCount.map(item => item.game_name)
       let count_bet = tempCount.map(item => item.count_betAmount)
@@ -60,14 +63,18 @@ function dashboard() {
       let game_name = tempAmount.map(item => item.game_name)
       let game_bet = tempAmount.map(item => item.sum_betAmount)
 
+      let game_win = tempWin.map(item => item.game_name)
+      let bet_win = tempWin.map(item => item.sum_win)
 
+      let game_lose = tempLose.map(item => item.game_name)
+      let bet_lose = tempLose.map(item => item.sum_betAmount)
 
       let dataCount = tempCount.sort((a, b) => b.count_betAmount - a.count_betAmount);
       const rankCount = dataCount.slice(0, 3);
 
       let data_name_count = rankCount.map(item => item.game_name)
       setNameDataCount(data_name_count)
-      setChartData({ game_name, game_bet, count_bet, count_name, rankCount, })
+      setChartData({ game_name, game_bet, count_bet, count_name, rankCount, game_win, bet_win, game_lose, bet_lose })
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -78,7 +85,7 @@ function dashboard() {
     labels: chartData.game_name,
     datasets: [
       {
-        label: 'จำนวนการเดิมพัน',
+        label: 'จำนวนการเดิมพัน / บาท',
         data: chartData.game_bet,
         backgroundColor: [
           '#E0DADE',
@@ -183,18 +190,18 @@ function dashboard() {
   };
 
   const dataPieWin = {
-    labels: chartData.game_name,
+    labels: chartData.game_win,
     datasets: [
       {
         label: 'Pie Chart Example',
-        data: chartData.game_bet,
+        data: chartData.bet_win,
         backgroundColor: [
-          '#E0DADE',
-          '#52bf49',
-          '#176d10',
-          '#5dc555',
-          '#3b9534',
-          '#129A50',
+          '#e5955a',
+          '#FDBB2F',
+          '#377B2B',
+          '#7AC142',
+          '#007CC3',
+          '#00529B',
 
 
         ],
@@ -207,20 +214,18 @@ function dashboard() {
   };
 
   const dataPieLost = {
-    labels: chartData.game_name,
+    labels: chartData.game_lose,
     datasets: [
       {
         label: 'Pie Chart Example',
-        data: chartData.game_bet,
+        data: chartData.bet_lose,
         backgroundColor: [
-          '#E0DADE',
-          '#c9c5a5',
-          '#9AA374',
-          '#979082',
-          '#7d7f63',
-          '#BB2828',
-
-
+          '#9BBFE0',
+          '#E8A09A',
+          '#FBE29F',
+          '#cea9bc',
+          '#C6D68F',
+          '#8464a0',
         ],
         borderColor: '#FFFF',
         borderWidth: 1,
