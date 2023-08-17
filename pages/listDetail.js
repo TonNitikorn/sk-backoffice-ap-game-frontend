@@ -555,7 +555,7 @@ function listDetail() {
       <Paper sx={{ p: 3, mt: 2 }}>
 
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid item xs={8}>
             <Grid
               container
               direction="row"
@@ -566,8 +566,7 @@ function listDetail() {
                   dataGame[0]?.game_img ?
                     <img
                       src={dataGame[0]?.game_img ? dataGame[0]?.game_img : noImg}
-                      width={371}
-                      height={206}
+                      style={{ maxWidth: '100%', height: 'auto' }}
                       alt="img game"
                     /> :
                     <Image
@@ -581,7 +580,7 @@ function listDetail() {
               </Grid>
               <Grid item xs={6} >
                 <Grid container sx={{ mt: 4 }}>
-                  <Grid item xs={4} >
+                  <Grid item xs={5} >
                     <Stack spacing={0} >
                       <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2, fontWeight: 'bold' }}>ชื่อเกม</Typography>
                       <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2, fontWeight: 'bold' }}>ประเภท</Typography>
@@ -590,7 +589,7 @@ function listDetail() {
                       <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2, fontWeight: 'bold' }}>Demo</Typography>
                     </Stack>
                   </Grid>
-                  <Grid item xs={8} >
+                  <Grid item xs={7} >
                     <Stack spacing={0} >
                       <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2 }}>{dataGame[0]?.game_name || "-"}</Typography>
                       <Typography sx={{ border: '1px solid #D3D3D3 ', p: 2 }}>{dataGame[0]?.game_type || "-"}</Typography>
@@ -604,7 +603,7 @@ function listDetail() {
             </Grid>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <Grid
               container
               direction="row"
@@ -668,6 +667,7 @@ function listDetail() {
               </Grid>
             </Grid>
           </Grid>
+
         </Grid>
 
 
