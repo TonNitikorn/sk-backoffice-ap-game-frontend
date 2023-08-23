@@ -42,6 +42,7 @@ function home() {
     const [dataLast, setDataLast] = useState([])
     const [bankData, setBankData] = useState([]);
 
+    
     const getDataLast = async () => {
         setLoading(true);
         try {
