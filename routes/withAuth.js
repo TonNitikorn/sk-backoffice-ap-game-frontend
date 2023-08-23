@@ -30,12 +30,12 @@ const withAuth = (WrappedComponent) => (props) => {
         return null;
       } 
       else if (route == "/") {
-        router.push(`/list`); // default page after login when call root path
+        router.push(`/dashboard`); // default page after login when call root path
         return null;
       }
     } else {
       if (isAuthenticated) {
-        router.push(`/list`); // default page after login
+        router.push(`/dashboard`); // default page after login
         return null;
       }
     }

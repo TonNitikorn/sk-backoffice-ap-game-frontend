@@ -230,7 +230,7 @@ function Login() {
                                     alert("Login failed");
 
                                  } else {
-                                    router.push("/list");
+                                    router.push("/dashboard");
                                  }
                               }
                            }
