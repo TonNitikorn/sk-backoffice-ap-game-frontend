@@ -427,7 +427,6 @@ function agent() {
           <Box>
             <Button
               variant="contained"
-              // onClick={() => router.push("/Agents/prefixManagement")}
               onClick={() => setOpenAddAgent(true)}
               sx={{
                 mr: "8px",
