@@ -3,6 +3,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import PersonIcon from '@mui/icons-material/Person';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import LinkIcon from '@mui/icons-material/Link';
 
 export const menuSuperAdmin = [
   {
@@ -26,12 +27,15 @@ export const menuSuperAdmin = [
     icon: <SportsEsportsIcon />,
   },
   {
+    name: "จัดการเอเยนต์",
+    link: "/Agents/agent",
+    icon: <LinkIcon />,
+  },
+  {
     name: "รายละเอียดเกม ",
     link: "/listDetail",
     icon: <StickyNote2Icon />,
   },
-
-
 
 ];
 
