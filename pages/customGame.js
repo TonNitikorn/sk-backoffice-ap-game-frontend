@@ -403,8 +403,6 @@ function customGame() {
 
     }
 
-    console.log('logo', logo)
-
     const columnsGame = [
         {
             title: 'No',

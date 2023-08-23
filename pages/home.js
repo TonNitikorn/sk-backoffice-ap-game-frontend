@@ -30,9 +30,7 @@ import LoadingModal from "../theme/LoadingModal";
 import { useAppDispatch } from "../store/store";
 import { signOut } from "../store/slices/userSlice";
 import { useRouter } from "next/router";
-// import MaterialTableForm from '../components/materialTableForm';
 import Pagination from '@mui/material/Pagination';
-// import MaterialTable from '@material-table/core/'
 
 
 function home() {
