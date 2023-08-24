@@ -4,7 +4,11 @@ import { Provider } from "react-redux";
 import { store } from "../store/store";
 import { getToken } from "../store/slices/userSlice";
 import { createTheme, ThemeProvider } from '@mui/material';
+<<<<<<< HEAD
 import { ConfigProvider } from 'antd';
+=======
+import { Table, Input, Space, } from 'antd';
+>>>>>>> 869da7bf6ff8081bd3eadae814c37330b37b4382
 
 function MyApp({ Component, pageProps }) {
 

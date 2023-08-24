@@ -22,7 +22,7 @@ import noImg from "../assets/noImgFound.png"
 import hostname from "../utils/hostname";
 import LoadingModal from "../theme/LoadingModal";
 import { Bar, Pie } from "react-chartjs-2";
-
+import { Table, Input, Space, } from 'antd';
 import Chart from 'chart.js/auto';
 
 function dashboard() {
