@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { store } from "../store/store";
 import { getToken } from "../store/slices/userSlice";
 import { createTheme, ThemeProvider } from '@mui/material';
+import { ConfigProvider } from 'antd';
 
 function MyApp({ Component, pageProps }) {
 
@@ -62,7 +63,15 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <Component {...pageProps} />
+          <ConfigProvider
+            theme={{
+              token: {
+                fontFamily: 'Noto Sans Thai',
+              },
+            }}
+          >
+            <Component {...pageProps} />
+          </ConfigProvider>
         </Provider>
       </ThemeProvider>
     </>
