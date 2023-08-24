@@ -251,6 +251,7 @@ function agent() {
           secret_key: rowData.secret_key,
           ip: rowData.ip,
           currency: rowData.currency,
+          status: statusAgent
         },
       });
       setOpenEditData(false);
